@@ -7,11 +7,9 @@ namespace Entr.CommandQuery
 {
     public interface IMediator
     {
-        TResponse Send<TResponse>(IRequest<TResponse> request);
         TResponse Send<TResponse>(ICommand<TResponse> command);
         TResponse Send<TResponse>(IQuery<TResponse> query);
 
-        Task<TResponse> SendAsync<TResponse>(IAsyncRequest<TResponse> request);
         Task<TResponse> SendAsync<TResponse>(IAsyncQuery<TResponse> command);
         Task<TResponse> SendAsync<TResponse>(IAsyncCommand<TResponse> query);
     }
@@ -20,9 +18,6 @@ namespace Entr.CommandQuery
     {
         static readonly Type AsyncRequestHandlerWrapperType = typeof(AsyncRequestHandlerWrapper<,>);
         static readonly Type RequestHandlerWrapperType = typeof(RequestHandlerWrapper<,>);
-
-        static readonly Type AsyncRequestHandlerInterfaceType = typeof(IAsyncRequestHandler<,>);
-        static readonly Type RequestHandlerInterfaceType = typeof(IRequestHandler<,>);
 
         static readonly Type AsyncCommandHandlerInterfaceType = typeof(IAsyncCommandHandler<,>);
         static readonly Type CommandHandlerInterfaceType = typeof(ICommandHandler<,>);
@@ -38,16 +33,6 @@ namespace Entr.CommandQuery
         public Mediator(IRequestHandlerResolver requestHandlerResolver)
         {
             _requestHandlerResolver = requestHandlerResolver;
-        }
-
-        [DebuggerNonUserCode]
-        public TResponse Send<TResponse>(IRequest<TResponse> request)
-        {
-            var handler = ResolveRequestHandler<TResponse>(
-                RequestHandlerInterfaceType,
-                request.GetType());
-
-            return handler.Handle(request);
         }
 
         [DebuggerNonUserCode]
@@ -82,16 +67,6 @@ namespace Entr.CommandQuery
             var handler = _requestHandlerResolver.Resolve(requestHandlerType);
 
             return (IRequestHandlerWrapper<TResponse>)Activator.CreateInstance(wrappedHandlerType, handler);
-        }
-
-        [DebuggerNonUserCode]
-        public Task<TResponse> SendAsync<TResponse>(IAsyncRequest<TResponse> request)
-        {
-            var handler = ResolveAsyncHandler<TResponse>(
-                AsyncRequestHandlerInterfaceType,
-                request.GetType());
-
-            return handler.Handle(request);
         }
 
         [DebuggerNonUserCode]

@@ -17,7 +17,7 @@
 
         public TResponse Handle(IRequest<TResponse> request)
         {
-            var typedCommand = (TRequest) request;
+            var typedCommand = (TRequest)request;
 
             return _decorated.Handle(typedCommand);
         }
