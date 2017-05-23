@@ -12,13 +12,6 @@ namespace Entr.CommandQuery.Autofac
             _lifetimeScope = lifetimeScope;
         }
 
-        public IRequestHandlerResolver CreateLifetimeScope()
-        {
-            var scope = _lifetimeScope.BeginLifetimeScope();
-
-            return new AutofacRequestHandlerResolver(scope);
-        }
-
         public object Resolve(Type type)
         {
             try
@@ -29,11 +22,6 @@ namespace Entr.CommandQuery.Autofac
             {
                 throw new RequestHandlerNotFoundException(type, ex);
             }
-        }
-
-        public void Dispose()
-        {
-            _lifetimeScope.Dispose();
         }
     }
 }

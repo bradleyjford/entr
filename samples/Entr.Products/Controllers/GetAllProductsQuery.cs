@@ -1,13 +1,18 @@
-﻿using Entr.CommandQuery;
+﻿using System.Threading.Tasks;
+using Entr.CommandQuery;
 using Entr.Data;
 using Entr.Products.Domain;
-using System.Threading.Tasks;
 
 namespace Entr.Products.Controllers
 {
     public class GetAllProductsQuery : IAsyncQuery<IPagedResult<Product>>
     {
-        public PagingOptions PagingOptions { get; } = new PagingOptions();
+        public GetAllProductsQuery(PagingOptions pagingOptions)
+        {
+            PagingOptions = pagingOptions;
+        }
+
+        public PagingOptions PagingOptions { get; }
     }
 
     public class GetAllProductsQueryHandler : IAsyncQueryHandler<GetAllProductsQuery, IPagedResult<Product>>

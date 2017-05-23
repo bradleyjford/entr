@@ -2,9 +2,8 @@
 
 namespace Entr.CommandQuery
 {
-    public interface IRequestHandlerResolver : IDisposable
+    public interface IRequestHandlerResolver
     {
-        IRequestHandlerResolver CreateLifetimeScope();
         object Resolve(Type type);
     }
 }

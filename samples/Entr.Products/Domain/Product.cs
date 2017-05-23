@@ -1,5 +1,5 @@
-﻿using Entr.Domain;
-using System;
+﻿using System;
+using Entr.Domain;
 
 namespace Entr.Products.Domain
 {

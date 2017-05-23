@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Entr.Data
+﻿namespace Entr.Data
 {
     public class SortDescriptor
     {
