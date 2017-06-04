@@ -1,5 +1,4 @@
-﻿using Entr.Data;
-using Entr.Products.Domain;
+﻿using Entr.Products.Domain;
 using Microsoft.EntityFrameworkCore;
 
 

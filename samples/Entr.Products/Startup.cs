@@ -3,6 +3,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Entr.CommandQuery.Autofac;
 using Entr.Data;
+using Entr.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,15 +26,17 @@ namespace Entr.Products
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(c => {
+                c.Filters.Add(new ValidateModelStateAsyncActionFilter());
+            });
 
             services.AddDbContext<ProductsDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
 
-        // Create the container builder.
-        var builder = new ContainerBuilder();
+            // Create the container builder.
+            var builder = new ContainerBuilder();
 
             // Register dependencies, populate the services from
             // the collection, and build the container. If you want

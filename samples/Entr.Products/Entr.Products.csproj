@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.1.0" />
     <PackageReference Include="AutoMapper" Version="6.0.2" />
+    <PackageReference Include="FluentValidation" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0-preview1-final" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.0-preview1-final" />
   </ItemGroup>
@@ -25,6 +26,7 @@
     <ProjectReference Include="..\..\src\Entr.Data\Entr.Data.csproj" />
     <ProjectReference Include="..\..\src\Entr.CommandQuery.Autofac\Entr.CommandQuery.Autofac.csproj" />
     <ProjectReference Include="..\..\src\Entr.Data.EntityFrameworkCore\Entr.Data.EntityFrameworkCore.csproj" />
+    <ProjectReference Include="..\..\src\Entr.Net.Http\Entr.Net.Http.csproj" />
 
   </ItemGroup>
 

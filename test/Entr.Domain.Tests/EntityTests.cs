@@ -37,7 +37,6 @@ namespace Seed.Common.Tests.Domain
             var person = new Person(1);
             var dog = new Dog(1);
 
-// ReSharper disable once SuspiciousTypeConversion.Global
             Assert.False(person.Equals(dog));
         }
 

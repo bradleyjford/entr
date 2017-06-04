@@ -43,7 +43,7 @@ namespace Entr.Data
                 .OrderBy(sortDescriptors)
                 .Skip(firstResult)
                 .Take(options.PageSize)
-                .ToListAsync();
+                .ToArrayAsync();
 
             return new PagedResult<T>(options.PageNumber, options.PageSize, items, itemCount);
         }

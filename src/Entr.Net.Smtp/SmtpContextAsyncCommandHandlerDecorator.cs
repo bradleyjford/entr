@@ -23,7 +23,7 @@ namespace Entr.Net.Smtp
 
         public async Task<TResult> Handle(TCommand command)
         {
-            var result = await _decorated.Handle(command);
+            TResult result = await _decorated.Handle(command);
 
             await SendEmails();
 
