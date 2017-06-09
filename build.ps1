@@ -1,15 +1,3 @@
-# Copyright (c) .NET Foundation. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use
-# these files except in compliance with the License. You may obtain a copy of the
-# License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software distributed
-# under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-# CONDITIONS OF ANY KIND, either express or implied. See the License for the
-# specific language governing permissions and limitations under the License.
 
 $ErrorActionPreference = "Stop"
 
@@ -25,12 +13,14 @@ function DownloadWithRetry([string] $url, [string] $downloadLocation, [int] $ret
         catch
         {
             $exceptionMessage = $_.Exception.Message
+
             Write-Host "Failed to download '$url': $exceptionMessage"
-            if ($retries -gt 0) {
+
+            if ($retries -gt 0) 
+            {
                 $retries--
                 Write-Host "Waiting 10 seconds before retrying. Retries left: $retries"
                 Start-Sleep -Seconds 10
-
             }
             else
             {
@@ -46,35 +36,33 @@ cd $PSScriptRoot
 $repoFolder = $PSScriptRoot
 $env:REPO_FOLDER = $repoFolder
 
-$koreBuildZip="https://github.com/aspnet/KoreBuild/archive/dev.zip"
-if ($env:KOREBUILD_ZIP)
+$dotnetcoreUrl="https://raw.githubusercontent.com/dotnet/cli/release/2.0.0/scripts/obtain/dotnet-install.ps1"
+
+if ($env:DOTNETCORE_URL)
 {
-    $koreBuildZip=$env:KOREBUILD_ZIP
+    $dotnetcoreUrl=$env:DOTNETCORE_URL
 }
 
 $buildFolder = ".build"
-$buildFile="$buildFolder\KoreBuild.ps1"
+$buildFile="$buildFolder\dotnet-install.ps1"
 
-if (!(Test-Path $buildFolder)) {
-    Write-Host "Downloading KoreBuild from $koreBuildZip"
+if (!(Test-Path $buildFolder))
+{
+    New-Item -ItemType Directory -Force -Path $buildFolder | Out-Null
 
-    $tempFolder=$env:TEMP + "\KoreBuild-" + [guid]::NewGuid()
-    New-Item -Path "$tempFolder" -Type directory | Out-Null
+    Write-Host "Downloading dotnet core from $dotnetcoreUrl"
 
-    $localZipFile="$tempFolder\korebuild.zip"
+    DownloadWithRetry -url $dotnetcoreUrl -downloadLocation $buildFile -retries 5
 
-    DownloadWithRetry -url $koreBuildZip -downloadLocation $localZipFile -retries 6
+    $cliVersion = "2.0.0-preview1-005977"
 
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($localZipFile, $tempFolder)
+    & $buildFolder/dotnet-install.ps1 -Version $cliVersion -InstallDir $buildFolder
 
-    New-Item -Path "$buildFolder" -Type directory | Out-Null
-    copy-item "$tempFolder\**\build\*" $buildFolder -Recurse
-
-    # Cleanup
-    if (Test-Path $tempFolder) {
-        Remove-Item -Recurse -Force $tempFolder
-    }
+    Write-Host "Downloading and installation of the SDK is complete."
 }
 
-&"$buildFile" @args
+
+$dotnet = "$buildFolder/dotnet"
+
+& $dotnet restore Entr.sln
+& $dotnet build Entr.sln -v q /nologo
