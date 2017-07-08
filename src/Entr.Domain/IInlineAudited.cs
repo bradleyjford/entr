@@ -2,7 +2,7 @@
 
 namespace Entr.Domain
 {
-    public interface IInlineAudited<out TUserId>
+    public interface IInlineAuditedEntity<out TUserId>
     {
         TUserId CreatedByUserId { get; }
         DateTime CreatedUtcDate { get; }

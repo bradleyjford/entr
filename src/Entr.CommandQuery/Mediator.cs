@@ -35,7 +35,6 @@ namespace Entr.CommandQuery
             _requestHandlerResolver = requestHandlerResolver;
         }
 
-        [DebuggerNonUserCode]
         public TResponse Send<TResponse>(ICommand<TResponse> command)
         {
             var handler = ResolveRequestHandler<TResponse>(
@@ -45,7 +44,6 @@ namespace Entr.CommandQuery
             return handler.Handle(command);
         }
 
-        [DebuggerNonUserCode]
         public TResponse Send<TResponse>(IQuery<TResponse> query)
         {
             var handler = ResolveRequestHandler<TResponse>(
@@ -69,7 +67,6 @@ namespace Entr.CommandQuery
             return (IRequestHandlerWrapper<TResponse>)Activator.CreateInstance(wrappedHandlerType, handler);
         }
 
-        [DebuggerNonUserCode]
         public Task<TResponse> SendAsync<TResponse>(IAsyncCommand<TResponse> command)
         {
             var handler = ResolveAsyncHandler<TResponse>(
@@ -79,7 +76,6 @@ namespace Entr.CommandQuery
             return handler.Handle(command);
         }
 
-        [DebuggerNonUserCode]
         public Task<TResponse> SendAsync<TResponse>(IAsyncQuery<TResponse> query)
         {
             var handler = ResolveAsyncHandler<TResponse>(

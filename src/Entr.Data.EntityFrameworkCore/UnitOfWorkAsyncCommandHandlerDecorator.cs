@@ -48,7 +48,7 @@ namespace Entr.Data
         {
             foreach (var entry in _dbContext.ChangeTracker.Entries())
             {
-                if (entry.Entity is IInlineAudited<Guid>)
+                if (entry.Entity is IInlineAuditedEntity<Guid>)
                 {
                     if (entry.State == EntityState.Added)
                     {
