@@ -6,6 +6,7 @@ using Entr.Data;
 using Entr.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,11 @@ namespace Entr.Products
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc(c => {
-                c.Filters.Add(new ValidateModelStateAsyncActionFilter());
+                var validationFilter = new ValidateModelStateAsyncActionFilter(
+                    ctx => ctx.HttpContext.Request.Path.StartsWithSegments(new PathString("/api"))
+                );
+
+                c.Filters.Add(validationFilter);
             });
 
             services.AddDbContext<ProductsDbContext>(options =>
