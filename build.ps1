@@ -43,6 +43,8 @@ if ($env:DOTNETCORE_URL)
     $dotnetcoreUrl=$env:DOTNETCORE_URL
 }
 
+$cliVersion = "2.0.0-preview2-006497"
+
 $buildFolder = ".build"
 $buildFile="$buildFolder\dotnet-install.ps1"
 
@@ -54,8 +56,6 @@ if (!(Test-Path $buildFolder))
 
     DownloadWithRetry -url $dotnetcoreUrl -downloadLocation $buildFile -retries 5
 
-    $cliVersion = "2.0.0-preview1-005977"
-
     & $buildFolder/dotnet-install.ps1 -Version $cliVersion -InstallDir $buildFolder
 
     Write-Host "Downloading and installation of the SDK is complete."
@@ -65,4 +65,4 @@ if (!(Test-Path $buildFolder))
 $dotnet = "$buildFolder/dotnet"
 
 & $dotnet restore Entr.sln
-& $dotnet build Entr.sln -v q /nologo
+& $dotnet build Entr.sln -v q /nologo -c Release
