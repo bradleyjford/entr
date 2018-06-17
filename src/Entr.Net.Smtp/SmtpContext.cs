@@ -13,7 +13,7 @@ namespace Entr.Net.Smtp
 
     public class SmtpContext : ISmtpContext
     {
-        Lazy<List<MailMessage>> _messages = new Lazy<List<MailMessage>>(() => new List<MailMessage>());
+        readonly Lazy<List<MailMessage>> _messages = new Lazy<List<MailMessage>>(() => new List<MailMessage>());
 
         public void QueueMessage(MailMessage message)
         {

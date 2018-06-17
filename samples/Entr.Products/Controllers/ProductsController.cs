@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using Entr.CommandQuery;
 using Entr.Data;
+using Entr.Products.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entr.Products.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : Controller
     {
@@ -24,11 +26,15 @@ namespace Entr.Products.Controllers
         {
             var query = new GetAllProductsQuery(pagingOptions);
 
-            return Ok(await _mediator.SendAsync(query));
+            var response = await _mediator.SendAsync(query);
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(Guid id)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<Product>> Get([FromRoute] Guid id)
         {
             var product = await _dbContext.Products
                 .AsNoTracking()
@@ -39,7 +45,7 @@ namespace Entr.Products.Controllers
                 return NotFound();
             }
 
-            return Ok(product);
+            return product;
         }
     }
 }

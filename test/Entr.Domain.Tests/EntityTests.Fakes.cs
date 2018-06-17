@@ -1,6 +1,6 @@
-﻿using Entr.Domain;
+﻿using System;
 
-namespace Seed.Common.Tests.Domain
+namespace Entr.Domain.Tests
 {
     partial class EntityTests
     {

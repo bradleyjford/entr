@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Entr.Data
+namespace Entr.Data.EntityFrameworkCore
 {
     public static class QueryablePagingExtensions
     {

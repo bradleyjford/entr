@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 
-namespace Seed.Common.Tests.Domain
+namespace Entr.Domain.Tests
 {
     public partial class EntityTests
     {

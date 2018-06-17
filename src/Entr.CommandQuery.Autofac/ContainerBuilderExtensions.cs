@@ -19,18 +19,6 @@ namespace Entr.CommandQuery.Autofac
                 .SingleInstance();
         }
 
-        public static void RegisterMediatorRequestHandlers(
-            this ContainerBuilder builder,
-            Assembly assembly,
-            params Type[] decorators)
-        {
-            RegisterMediatorRequestHandlers(
-                builder,
-                typeof(IRequestHandler<,>),
-                assembly,
-                decorators);
-        }
-
         public static void RegisterMediatorAsyncRequestHandlers(
             this ContainerBuilder builder,
             Assembly assembly,
@@ -43,18 +31,6 @@ namespace Entr.CommandQuery.Autofac
                 decorators);
         }
 
-        public static void RegisterMediatorCommandHandlers(
-            this ContainerBuilder builder, 
-            Assembly assembly, 
-            params Type[] decorators)
-        {
-            RegisterMediatorRequestHandlers(
-                builder, 
-                typeof(ICommandHandler<,>), 
-                assembly, 
-                decorators);
-        }
-
         public static void RegisterMediatorAsyncCommandHandlers(
             this ContainerBuilder builder,
             Assembly assembly,
@@ -63,18 +39,6 @@ namespace Entr.CommandQuery.Autofac
             RegisterMediatorRequestHandlers(
                 builder,
                 typeof(IAsyncCommandHandler<,>),
-                assembly,
-                decorators);
-        }
-
-        public static void RegisterMediatorQueryHandlers(
-            this ContainerBuilder builder,
-            Assembly assembly,
-            params Type[] decorators)
-        {
-            RegisterMediatorRequestHandlers(
-                builder,
-                typeof(IQueryHandler<,>),
                 assembly,
                 decorators);
         }

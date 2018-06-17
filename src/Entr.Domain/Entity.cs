@@ -5,7 +5,7 @@ namespace Entr.Domain
     public abstract class Entity<TId> : IEquatable<Entity<TId>>
     {
         readonly object _hashCodeLock = new object();
-        int? _hashCode;
+        volatile int _hashCode;
 
         public TId Id { get; protected internal set; }
 
@@ -31,18 +31,18 @@ namespace Entr.Domain
 
         public override int GetHashCode()
         {
-            if (!_hashCode.HasValue)
+            if (_hashCode == 0)
             {
                 lock (_hashCodeLock)
                 {
-                    if (!_hashCode.HasValue)
+                    if (_hashCode == 0)
                     {
                         _hashCode = EntityHashCodeCalculator.CalculateHashCode(this);
                     }
                 }
             }
 
-            return _hashCode.Value;
+            return _hashCode;
         }
 
         public static bool operator ==(Entity<TId> left, Entity<TId> right)

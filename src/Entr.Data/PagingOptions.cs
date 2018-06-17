@@ -19,14 +19,11 @@ namespace Entr.Data
 
         public string SortOrder { get; set; }
 
-        public IEnumerable<SortDescriptor> SortDescriptors
-        {
-            get { return SortDescriptorParser.Parse(SortOrder); }
-        }
+        public IEnumerable<SortDescriptor> SortDescriptors => SortDescriptorParser.Parse(SortOrder);
 
         public int PageNumber
         {
-            get { return _pageNumber; } 
+            get => _pageNumber;
 
             set
             {
@@ -41,7 +38,7 @@ namespace Entr.Data
         
         public int PageSize
         {
-            get { return _pageSize; }
+            get => _pageSize;
 
             set 
             { 

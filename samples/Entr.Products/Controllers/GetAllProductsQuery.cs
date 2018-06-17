@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Entr.CommandQuery;
 using Entr.Data;
+using Entr.Data.EntityFrameworkCore;
 using Entr.Products.Domain;
 
 namespace Entr.Products.Controllers

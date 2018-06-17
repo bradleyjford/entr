@@ -14,7 +14,7 @@
             Direction = direction;
         }
 
-        public string PropertyName { get; private set; }
-        public SortDirection Direction { get; private set; }
+        public string PropertyName { get; }
+        public SortDirection Direction { get; }
     }
 }

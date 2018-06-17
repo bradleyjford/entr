@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 using Entr.CommandQuery;
 using Entr.Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Entr.Data
+namespace Entr.Data.EntityFrameworkCore
 {
     public class UnitOfWorkAsyncCommandHandlerDecorator<TCommand, TResponse> 
         : IAsyncCommandHandler<TCommand, TResponse>
@@ -32,7 +31,7 @@ namespace Entr.Data
 
             OnBeforeSaveChanges();
 
-            ApplyInlineAuditValues();
+            DbContextInlineAuditor.ApplyInlineAuditValues(_dbContext, _userContext);
             RestoreRowVersions();
 
             await _dbContext.SaveChangesAsync();
@@ -42,37 +41,6 @@ namespace Entr.Data
 
         protected virtual void OnBeforeSaveChanges()
         {
-        }
-
-        void ApplyInlineAuditValues()
-        {
-            foreach (var entry in _dbContext.ChangeTracker.Entries())
-            {
-                if (entry.Entity is IInlineAuditedEntity<Guid>)
-                {
-                    if (entry.State == EntityState.Added)
-                    {
-                        SetCreated(entry);
-                        SetModified(entry);
-                    }
-                    else if (entry.State == EntityState.Modified)
-                    {
-                        SetModified(entry);
-                    }
-                }
-            }
-        }
-
-        void SetCreated(EntityEntry entry)
-        {
-            entry.CurrentValues["CreatedUtcDate"] = ClockProvider.GetUtcNow();
-            entry.CurrentValues["CreatedByUserId"] = _userContext.UserId;
-        }
-
-        void SetModified(EntityEntry entry)
-        {
-            entry.CurrentValues["ModifiedUtcDate"] = ClockProvider.GetUtcNow();
-            entry.CurrentValues["ModifiedByUserId"] = _userContext.UserId;
         }
 
         void RestoreRowVersions()

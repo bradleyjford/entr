@@ -8,7 +8,7 @@ namespace Entr.Domain
         readonly Expression<Func<T, bool>> _expression;
         readonly Lazy<Func<T, bool>> _delegate;
 
-        public Specification(Expression<Func<T, bool>> expression)
+        protected Specification(Expression<Func<T, bool>> expression)
         {
             _expression = expression;
             _delegate = new Lazy<Func<T, bool>>(() => _expression.Compile());

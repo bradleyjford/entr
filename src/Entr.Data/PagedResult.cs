@@ -13,7 +13,7 @@ namespace Entr.Data
         IEnumerable<object> Items { get; }
     }
 
-    public interface IPagedResult<T>
+    public interface IPagedResult<out T>
     {
         int PageNumber { get; }
         int PageSize { get; }
@@ -34,18 +34,12 @@ namespace Entr.Data
 
         public int PageNumber { get; set; }
         public int PageSize { get; set; }
-        public int ItemCount { get; private set; }
-        public IEnumerable<T> Items { get; private set; }
+        public int ItemCount { get; }
+        public IEnumerable<T> Items { get; }
 
-        public int PageCount
-        {
-            get { return (int)Math.Ceiling(((double)ItemCount / PageSize)); }
-        }
+        public int PageCount => (int)Math.Ceiling(((double)ItemCount / PageSize));
 
-        IEnumerable<object> IPagedResult.Items
-        {
-            get { return Items.Cast<object>(); }
-        }
+        IEnumerable<object> IPagedResult.Items => Items.Cast<object>();
     }
 
     public class PagedResult : PagedResult<object>

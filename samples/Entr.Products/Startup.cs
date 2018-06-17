@@ -2,11 +2,10 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Entr.CommandQuery.Autofac;
-using Entr.Data;
-using Entr.Net.Http;
+using Entr.Data.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,13 +26,8 @@ namespace Entr.Products
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(c => {
-                var validationFilter = new ValidateModelStateAsyncActionFilter(
-                    ctx => ctx.HttpContext.Request.Path.StartsWithSegments(new PathString("/api"))
-                );
-
-                c.Filters.Add(validationFilter);
-            });
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<ProductsDbContext>(options =>
             {
@@ -68,6 +62,7 @@ namespace Entr.Products
             IHostingEnvironment env, 
             ILoggerFactory loggerFactory)
         {
+            app.UseHttpsRedirection();
             app.UseMvc();
 
             appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());

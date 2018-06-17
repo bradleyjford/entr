@@ -2,6 +2,12 @@
 
 namespace Entr.Domain
 {
+    public interface IInlineAuditedEntity
+    {
+        object CreatedByUserId { get; }
+        object ModifiedByUserId { get; }
+    }
+
     public interface IInlineAuditedEntity<out TUserId>
     {
         TUserId CreatedByUserId { get; }
