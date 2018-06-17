@@ -6,34 +6,30 @@ dotnet_csproj:
   assembly_version: '{version}'
   file_version: '{version}'
   informational_version: '{version}'
+
 image: Visual Studio 2017
+
 branches:
   only:
   - master
+
 init:
   # Best practice (Windows line endings different to Unix/Linux)
   - cmd: git config --global core.autocrlf true
-install:
- 
+
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
-  # Display minimal restore text
-  - cmd: dotnet restore Entr.sln
+
 build_script:
-  
   - cmd: dotnet build Entr.sln
-after_build:
-  # For once the build has completed
- 
-on_finish :
-  # any cleanup in here
+
 deploy: off
 
 test_script:
   - cmd: dotnet test Entr.sln
+  
 test:
   assemblies:
     only:
     - '**\*.Tests.dll'
-    
