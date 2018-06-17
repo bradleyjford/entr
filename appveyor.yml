@@ -6,6 +6,8 @@ branches:
     - dev
 build_script:
   - ps: .\build.ps1
+test_script:
+  - ps: .\test.ps1
 clone_depth: 1
 test: on
 deploy: off
