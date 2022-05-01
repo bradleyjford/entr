@@ -34,7 +34,7 @@ namespace Entr.Products.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Product>> Get([FromRoute] Guid id)
+        public async Task<ActionResult<Product>> Get([FromRoute] ProductId id)
         {
             var product = await _dbContext.Products
                 .AsNoTracking()

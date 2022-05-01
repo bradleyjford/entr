@@ -83,7 +83,7 @@ namespace Entr.Data
             if (sortDescriptors == null) throw new ArgumentNullException(nameof(sortDescriptors));
             if (!sortDescriptors.Any()) throw new ArgumentException("No SortDescriptors specified", nameof(sortDescriptors));
 
-            IOrderedQueryable<T> result = null;
+            IOrderedQueryable<T>? result = null;
 
             foreach (var sortDescriptor in sortDescriptors)
             {
@@ -101,7 +101,7 @@ namespace Entr.Data
                 }
             }
 
-            return result;
+            return result!;
         }
     }
 }

@@ -1,24 +1,23 @@
 ﻿using System;
 
-namespace Entr.Domain
+namespace Entr.Domain;
+
+public interface IUserContext<out TUserId>
 {
-    public interface IUserContext<out TUserId>
-    {
-        TUserId UserId { get; }
-    }
+    TUserId UserId { get; }
+}
 
-    public interface IUserContext
-    {
-        object UserId { get; }
-    }
+public interface IUserContext
+{
+    object UserId { get; }
+}
 
-    public abstract class UserContext<TUserId> : IUserContext<TUserId>, IUserContext
+public abstract class UserContext<TUserId> : IUserContext<TUserId>, IUserContext
+{
+    public abstract TUserId UserId { get; }
+
+    object IUserContext.UserId
     {
-        public abstract TUserId UserId { get; }
-    
-        object IUserContext.UserId
-        {
-            get => UserId;
-        }
+        get => UserId!;
     }
 }

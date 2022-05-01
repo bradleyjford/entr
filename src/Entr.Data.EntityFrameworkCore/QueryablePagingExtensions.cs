@@ -4,69 +4,68 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Entr.Data.EntityFrameworkCore
+namespace Entr.Data.EntityFrameworkCore;
+
+public static class QueryablePagingExtensions
 {
-    public static class QueryablePagingExtensions
+    static readonly MethodInfo PagedMethod = typeof(QueryablePagingExtensions).GetMethods()
+        .Single(method =>
+            method.Name == "ToPagedResultAsync" &&
+            method.GetParameters()[2].ParameterType == typeof(SortDescriptor[]));
+
+    public static Task<IPagedResult<T>> ToPagedResultAsync<T>(
+        this IQueryable<T> source,
+        IPagingOptions options,
+        SortDescriptor defaultSort)
+        where T : class
     {
-        static readonly MethodInfo PagedMethod = typeof(QueryablePagingExtensions).GetMethods()
-            .Single(method =>
-                method.Name == "ToPagedResultAsync" &&
-                method.GetParameters()[2].ParameterType == typeof(SortDescriptor[]));
+        return ToPagedResultAsync(source, options, new[] { defaultSort });
+    }
 
-        public static Task<IPagedResult<T>> ToPagedResultAsync<T>(
-            this IQueryable<T> source,
-            IPagingOptions options,
-            SortDescriptor defaultSort)
-            where T : class
+    public static async Task<IPagedResult<T>> ToPagedResultAsync<T>(
+        this IQueryable<T> source,
+        IPagingOptions options,
+        SortDescriptor[] defaultSort)
+        where T : class
+    {
+        var firstResult = (options.PageNumber - 1) * options.PageSize;
+
+        var sortDescriptors = options.SortDescriptors;
+
+        if (!sortDescriptors.Any())
         {
-            return ToPagedResultAsync(source, options, new[] { defaultSort });
+            sortDescriptors = defaultSort;
         }
 
-        public static async Task<IPagedResult<T>> ToPagedResultAsync<T>(
-            this IQueryable<T> source,
-            IPagingOptions options,
-            SortDescriptor[] defaultSort)
-            where T : class
-        {
-            var firstResult = (options.PageNumber - 1) * options.PageSize;
+        var itemCount = await source.CountAsync();
 
-            var sortDescriptors = options.SortDescriptors;
+        var items = await source
+            .OrderBy(sortDescriptors)
+            .Skip(firstResult)
+            .Take(options.PageSize)
+            .ToArrayAsync();
 
-            if (!sortDescriptors.Any())
-            {
-                sortDescriptors = defaultSort;
-            }
+        return new PagedResult<T>(options.PageNumber, options.PageSize, items, itemCount);
+    }
 
-            var itemCount = await source.CountAsync();
+    public static dynamic ToPagedResultAsync(
+        this IQueryable source,
+        Type type,
+        IPagingOptions options,
+        SortDescriptor defaultSort)
+    {
+        return ToPagedResultAsync(source, type, options, new[] { defaultSort });
+    }
 
-            var items = await source
-                .OrderBy(sortDescriptors)
-                .Skip(firstResult)
-                .Take(options.PageSize)
-                .ToArrayAsync();
+    public static dynamic ToPagedResultAsync(
+        this IQueryable source,
+        Type type,
+        IPagingOptions options,
+        SortDescriptor[] defaultSort)
+    {
+        var result = PagedMethod.MakeGenericMethod(type)
+            .Invoke(null, new object[] { source, options, defaultSort });
 
-            return new PagedResult<T>(options.PageNumber, options.PageSize, items, itemCount);
-        }
-
-        public static dynamic ToPagedResultAsync(
-            this IQueryable source,
-            Type type,
-            IPagingOptions options,
-            SortDescriptor defaultSort)
-        {
-            return ToPagedResultAsync(source, type, options, new[] { defaultSort });
-        }
-
-        public static dynamic ToPagedResultAsync(
-            this IQueryable source,
-            Type type,
-            IPagingOptions options,
-            SortDescriptor[] defaultSort)
-        {
-            var result = PagedMethod.MakeGenericMethod(type)
-                .Invoke(null, new object[] { source, options, defaultSort });
-
-            return result;
-        }
+        return result!;
     }
 }

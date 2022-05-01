@@ -17,7 +17,7 @@ namespace Entr.Data
         int _pageNumber = 1;
         int _pageSize = DefaultPageSize;
 
-        public string SortOrder { get; set; }
+        public string? SortOrder { get; set; }
 
         public IEnumerable<SortDescriptor> SortDescriptors => SortDescriptorParser.Parse(SortOrder);
 

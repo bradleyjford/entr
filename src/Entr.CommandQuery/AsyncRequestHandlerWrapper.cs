@@ -1,27 +1,26 @@
 ﻿using System.Threading.Tasks;
 
-namespace Entr.CommandQuery
+namespace Entr.CommandQuery;
+
+interface IAsyncRequestHandlerWrapper<TResponse>
 {
-    interface IAsyncRequestHandlerWrapper<TResponse>
+    Task<TResponse> Handle(IAsyncRequest<TResponse> request);
+}
+
+class AsyncRequestHandlerWrapper<TRequest, TResponse> : IAsyncRequestHandlerWrapper<TResponse>
+    where TRequest : IAsyncRequest<TResponse>
+{
+    readonly IAsyncRequestHandler<TRequest, TResponse> _decorated;
+
+    public AsyncRequestHandlerWrapper(IAsyncRequestHandler<TRequest, TResponse> decorated)
     {
-        Task<TResponse> Handle(IAsyncRequest<TResponse> request);
+        _decorated = decorated;
     }
 
-    class AsyncRequestHandlerWrapper<TRequest, TResponse> : IAsyncRequestHandlerWrapper<TResponse>
-        where TRequest : IAsyncRequest<TResponse>
+    public Task<TResponse> Handle(IAsyncRequest<TResponse> request)
     {
-        readonly IAsyncRequestHandler<TRequest, TResponse> _decorated;
+        var typedCommand = (TRequest)request;
 
-        public AsyncRequestHandlerWrapper(IAsyncRequestHandler<TRequest, TResponse> decorated)
-        {
-            _decorated = decorated;
-        }
-
-        public Task<TResponse> Handle(IAsyncRequest<TResponse> request)
-        {
-            var typedCommand = (TRequest)request;
-
-            return _decorated.Handle(typedCommand);
-        }
+        return _decorated.Handle(typedCommand);
     }
 }

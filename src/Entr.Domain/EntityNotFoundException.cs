@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace Entr.Domain
+namespace Entr.Domain;
+
+[Serializable]
+public class EntityNotFoundException : Exception
 {
-    [Serializable]
-    public class EntityNotFoundException : Exception
+    public EntityNotFoundException()
     {
-        public EntityNotFoundException()
-        {
-        }
+    }
 
-        public EntityNotFoundException(string message) : base(message)
-        {
-        }
+    public EntityNotFoundException(string message) : base(message)
+    {
+    }
 
-        public EntityNotFoundException(string message, Exception inner) : base(message, inner)
-        { 
-        }
+    public EntityNotFoundException(string message, Exception inner) : base(message, inner)
+    { 
+    }
 
-        protected EntityNotFoundException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
+    protected EntityNotFoundException(
+        SerializationInfo info,
+        StreamingContext context) : base(info, context)
+    {
     }
 }

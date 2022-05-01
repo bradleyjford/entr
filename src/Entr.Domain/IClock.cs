@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Entr.Domain
+namespace Entr.Domain;
+
+public interface IClock
 {
-    public interface IClock
-    {
-        DateTime GetUtcNow();
-    }
+    DateTime GetUtcNow();
 }

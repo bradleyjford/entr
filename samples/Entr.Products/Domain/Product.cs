@@ -3,11 +3,14 @@ using Entr.Domain;
 
 namespace Entr.Products.Domain
 {
-    public class Product : Entity<Guid>
+    [EntrEntityId<Guid>]
+    public class ProductId { }
+
+    public class Product : Entity<ProductId>
     {
         public Product()
         {
-            Id = SequentialGuidGenerator.GenerateId();
+            Id = ProductId.New();
         }
 
         public string Name { get; set; }

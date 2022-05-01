@@ -1,19 +1,18 @@
 ﻿using System;
 
-namespace Entr.Domain
+namespace Entr.Domain;
+
+public static class ClockProvider
 {
-    public static class ClockProvider
+    static IClock _clock = new SystemClock();
+
+    public static void SetClock(IClock clock)
     {
-        static IClock _clock = new SystemClock();
+        _clock = clock;
+    }
 
-        public static void SetClock(IClock clock)
-        {
-            _clock = clock;
-        }
-
-        public static DateTime GetUtcNow()
-        {
-            return _clock.GetUtcNow();
-        }
+    public static DateTime GetUtcNow()
+    {
+        return _clock.GetUtcNow();
     }
 }

@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp6.0</TargetFramework>
     <UserSecretsId>Entr.Products</UserSecretsId>
+    <EnablePreviewFeatures>true</EnablePreviewFeatures>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,14 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
-    <PackageReference Include="AutoMapper" Version="7.0.0" />
-    <PackageReference Include="FluentValidation" Version="7.6.103" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" PrivateAssets="All" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
+    <PackageReference Include="FluentValidation" Version="10.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.3" PrivateAssets="All" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\..\src\Entr.Domain\Entr.Domain.csproj" />
     <ProjectReference Include="..\..\src\Entr.CommandQuery\Entr.CommandQuery.csproj" />
@@ -25,6 +25,8 @@
     <ProjectReference Include="..\..\src\Entr.CommandQuery.Autofac\Entr.CommandQuery.Autofac.csproj" />
     <ProjectReference Include="..\..\src\Entr.Data.EntityFrameworkCore\Entr.Data.EntityFrameworkCore.csproj" />
 
+    <ProjectReference Include="..\..\src\Entr.Domain.SourceGenerators\Entr.Domain.SourceGenerators.csproj" 
+                      OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
