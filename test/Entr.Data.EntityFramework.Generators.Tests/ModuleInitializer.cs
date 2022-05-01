@@ -1,8 +1,6 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using VerifyTests;
+﻿using System.Runtime.CompilerServices;
 
-namespace Entr.Domain.SourceGenerators.Tests;
+namespace Entr.Data.EntityFramework.Generators.Tests;
 
 public static class ModuleInitializer
 {

@@ -16,5 +16,5 @@ public class EntityIdTests
 }
 
 [EntrEntityId<int>]
-public class BradId { }
+public partial class BradId { }
 

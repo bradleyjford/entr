@@ -3,10 +3,10 @@
 namespace Entr.Domain.Tests;
 
 [EntrEntityId<int>]
-public class PersonId { }
+public partial class PersonId { }
 
 [EntrEntityId<int>]
-public class DogId { }
+public partial class DogId { }
 
 partial class EntityTests
 {

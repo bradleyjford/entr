@@ -4,7 +4,7 @@ namespace Entr.Domain;
 
 public class SystemClock : IClock
 {
-    public DateTime GetUtcNow()
+    public DateTimeOffset GetUtcNow()
     {
         return DateTime.UtcNow;
     }

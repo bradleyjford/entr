@@ -1,11 +1,8 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Entr.CommandQuery;
+﻿using Entr.CommandQuery;
 using Entr.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Entr.Data.EntityFrameworkCore
+namespace Entr.Data.EntityFramework
 {
     public class UnitOfWorkAsyncCommandHandlerDecorator<TCommand, TResponse> 
         : IAsyncCommandHandler<TCommand, TResponse>

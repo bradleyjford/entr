@@ -1,5 +1,4 @@
 ﻿//HintName: EntityIdExtensionsAttribute.g.cs
-
 namespace Entr.Domain
 {
     [System.AttributeUsage(System.AttributeTargets.Class)]

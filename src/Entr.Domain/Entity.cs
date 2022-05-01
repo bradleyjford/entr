@@ -46,13 +46,9 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
         return _hashCode;
     }
 
-    public static bool operator ==(Entity<TId> left, Entity<TId> right)
-    {
-        return Equals(left, right);
-    }
+    public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
+        => Equals(left, right);
 
-    public static bool operator !=(Entity<TId> left, Entity<TId> right)
-    {
-        return !Equals(left, right);
-    }
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right) 
+        => !Equals(left, right);
 }

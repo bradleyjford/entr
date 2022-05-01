@@ -1,9 +1,8 @@
-﻿using System;
-using Entr.Domain;
+﻿using Entr.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Entr.Data.EntityFrameworkCore
+namespace Entr.Data.EntityFramework
 {
     public static class DbContextInlineAuditor
     {

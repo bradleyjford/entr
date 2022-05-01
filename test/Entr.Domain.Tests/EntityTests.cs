@@ -105,7 +105,7 @@ public partial class EntityTests
     [Fact]
     public void GetHashCode_ChangingAnEntitiesId_DoesNotChangeHashCode()
     {
-        var person = new Person(new PersonId(0));
+        var person = new Person(new PersonId(3));
 
         var originalHashCode = person.GetHashCode();
 

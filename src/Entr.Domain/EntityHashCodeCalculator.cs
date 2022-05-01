@@ -8,20 +8,16 @@ static class EntityHashCodeCalculator
 
     public static int CalculateHashCode<TId>(Entity<TId> entity)
     {
-        var result = HashCodeUtility.Hash(HashCodeUtility.Seed, entity.GetType());
-
-        if (default(TId)!.Equals(entity.Id))
+        if (Equals(default(TId), entity.Id))
         {
             var random = RandomGenerator.Next(Int32.MinValue, Int32.MaxValue);
 
-            result = HashCodeUtility.Hash(result, random);
+            var result = HashCodeUtility.Hash(HashCodeUtility.Seed, entity.GetType());
+            return HashCodeUtility.Hash(result, random);
         }
         else
         {
-            result = HashCodeUtility.Hash(result, entity.Id!);
+            return entity.Id.GetHashCode();
         }
-
-        return result;
     }
-
 }

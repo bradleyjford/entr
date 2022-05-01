@@ -1,10 +1,9 @@
-﻿
-using System.Reflection;
+﻿using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using VerifyXunit;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Entr.Domain.SourceGenerators.Tests;
+namespace Entr.Domain.Generators.Tests;
 
 public static class TestHelper
 {
@@ -23,7 +22,7 @@ public static class TestHelper
 
         // Create a Roslyn compilation for the syntax tree.
         var compilation = CSharpCompilation.Create(
-            assemblyName: "Tests",
+            assemblyName: "DomainGeneratorTests",
             syntaxTrees: new[] { syntaxTree },
             references: references);
 

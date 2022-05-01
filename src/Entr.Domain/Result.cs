@@ -6,7 +6,7 @@ public abstract class Result
 {
     public static readonly EmptyResult Empty = new EmptyResult();
 
-    public static Result CreateValueResult<TValue>(TValue value)
+    public static Result Create<TValue>(TValue value)
     {
         return new ValueResult<TValue>(value);
     }
@@ -16,6 +16,9 @@ public abstract class Result
 
 public sealed class EmptyResult : Result
 {
+    internal EmptyResult()
+    {
+    }
 }
 
 public sealed class ValueResult<TValue> : Result

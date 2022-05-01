@@ -1,10 +1,7 @@
-﻿using VerifyXunit;
-using Xunit;
-
-namespace Entr.Domain.SourceGenerators.Tests;
+﻿namespace Entr.Data.EntityFramework.Generators.Tests;
 
 [UsesVerify]
-public class EntrEntityIdGeneratorTests
+public class EntrEntityIdValueConverterGeneratorTests
 {
     [Fact]
     public Task GeneratesEntityIdClassCorrectly()

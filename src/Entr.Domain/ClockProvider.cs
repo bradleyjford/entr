@@ -11,7 +11,7 @@ public static class ClockProvider
         _clock = clock;
     }
 
-    public static DateTime GetUtcNow()
+    public static DateTimeOffset GetUtcNow()
     {
         return _clock.GetUtcNow();
     }

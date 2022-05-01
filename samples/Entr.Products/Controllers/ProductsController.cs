@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Entr.CommandQuery;
 using Entr.Data;
+using Entr.Products.Data;
 using Entr.Products.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,11 +35,13 @@ namespace Entr.Products.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<ActionResult<Product>> Get([FromRoute] ProductId id)
+        public async Task<ActionResult<Product>> Get([FromRoute] Guid id)
         {
+            var pid = new ProductId(Guid.Parse("7ac27466-2f86-4105-be90-60d48e356537"));
+            
             var product = await _dbContext.Products
                 .AsNoTracking()
-                .SingleOrDefaultAsync(p => p.Id == id);
+                .SingleOrDefaultAsync(p => p.Id == pid);
 
             if (product == null)
             {

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
-namespace Entr.Data.EntityFrameworkCore;
+namespace Entr.Data.EntityFramework;
 
 public static class QueryablePagingExtensions
 {
