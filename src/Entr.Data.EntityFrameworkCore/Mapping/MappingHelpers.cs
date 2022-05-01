@@ -3,7 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Entr.Data.Mapping
+namespace Entr.Data.EntityFrameworkCore.Mapping
 {
     public static class MappingHelpers
     {

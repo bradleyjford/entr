@@ -62,6 +62,12 @@ namespace Entr.Products
             IHostingEnvironment env, 
             ILoggerFactory loggerFactory)
         {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+            }
+            
             app.UseHttpsRedirection();
             app.UseMvc();
 

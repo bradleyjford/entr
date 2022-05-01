@@ -94,7 +94,7 @@ namespace Entr.Domain.Tests
         }
 
         [Fact]
-        public void GetHashCode_EntitiesOfSameTypeWithDifferingIds_HaveDifferentHashCodes()
+        public void GetHashCode_EntitiesOfSameTypeWithDifferentIds_HaveDifferentHashCodes()
         {
             var a = new Person(1);
             var b = new Person(5);

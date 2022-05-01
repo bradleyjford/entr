@@ -4,7 +4,7 @@ namespace Entr.Domain.Tests
 {
     partial class EntityTests
     {
-        public class Person : Entity<int>
+        class Person : Entity<int>
         {
             public Person(int id)
             {
@@ -17,7 +17,7 @@ namespace Entr.Domain.Tests
             }
         }
 
-        public class Dog : Entity<int>
+        class Dog : Entity<int>
         {
             public Dog(int id)
             {

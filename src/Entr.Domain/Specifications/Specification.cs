@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Entr.Domain
+namespace Entr.Domain.Specifications
 {
     public abstract class Specification<T>
     {

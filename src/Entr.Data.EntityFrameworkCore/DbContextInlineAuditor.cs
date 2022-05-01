@@ -7,13 +7,17 @@ namespace Entr.Data.EntityFrameworkCore
 {
     public static class DbContextInlineAuditor
     {
+        private const string CreatedUtcDatePropertyName = "CreatedUtcDate";
+        private const string CreatedByUserIdPropertyName = "CreatedByUserId";
+
+        private const string ModifiedUtcDatePropertyName = "ModifiedUtcDate";
+        private const string ModifiedByUserIdPropertyName = "ModifiedByUserId";
+        
         public static void ApplyInlineAuditValues(DbContext dbContext, IUserContext userContext)
         {
             foreach (var entry in dbContext.ChangeTracker.Entries())
             {
-                var inlineAudited = entry.Entity as IInlineAuditedEntity;
-
-                if (inlineAudited == null)
+                if (!(entry.Entity is IInlineAuditedEntity))
                 {
                     continue;
                 }
@@ -32,21 +36,25 @@ namespace Entr.Data.EntityFrameworkCore
 
         static void SetCreated(IUserContext userContext, EntityEntry entry)
         {
-            var existingCreatedUtcDate = entry.CurrentValues["CreatedUtcDate"] as DateTime?;
+            var existingCreatedUtcDate = entry.CurrentValues[CreatedUtcDatePropertyName] as DateTime?;
 
             // Do not attempt to set the CreatedUtcDate if a value has already been supplied.
             if (existingCreatedUtcDate == null || existingCreatedUtcDate == default(DateTime))
             {
-                entry.CurrentValues["CreatedUtcDate"] = ClockProvider.GetUtcNow();
+                entry.CurrentValues[CreatedUtcDatePropertyName] = ClockProvider.GetUtcNow();
             }
 
-            entry.CurrentValues["CreatedByUserId"] = userContext.UserId;
+            entry.CurrentValues[CreatedByUserIdPropertyName] = userContext.UserId;
         }
 
         static void SetModified(IUserContext userContext, EntityEntry entry)
         {
-            entry.CurrentValues["ModifiedUtcDate"] = ClockProvider.GetUtcNow();
-            entry.CurrentValues["ModifiedByUserId"] = userContext.UserId;
+            if (entry.OriginalValues[ModifiedUtcDatePropertyName] == entry.CurrentValues[ModifiedUtcDatePropertyName])
+            {
+                entry.CurrentValues[ModifiedUtcDatePropertyName] = ClockProvider.GetUtcNow();
+            }
+
+            entry.CurrentValues[ModifiedByUserIdPropertyName] = userContext.UserId;
         }
     }
 }

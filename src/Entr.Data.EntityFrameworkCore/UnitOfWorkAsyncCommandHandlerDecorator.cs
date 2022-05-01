@@ -32,7 +32,6 @@ namespace Entr.Data.EntityFrameworkCore
             OnBeforeSaveChanges();
 
             DbContextInlineAuditor.ApplyInlineAuditValues(_dbContext, _userContext);
-            RestoreRowVersions();
 
             await _dbContext.SaveChangesAsync();
 
@@ -41,25 +40,6 @@ namespace Entr.Data.EntityFrameworkCore
 
         protected virtual void OnBeforeSaveChanges()
         {
-        }
-
-        void RestoreRowVersions()
-        {
-            foreach (var entry in _dbContext.ChangeTracker.Entries())
-            {
-                if (entry.State == EntityState.Added || entry.State == EntityState.Deleted)
-                {
-                    continue;
-                }
-
-                if (entry.CurrentValues.Properties.Any(p => p.Name == "RowVersion"))
-                {
-                    var property = entry.Property("RowVersion");
-
-                    property.OriginalValue = property.CurrentValue;
-                    property.IsModified = false;
-                }
-            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Entr.Domain
+namespace Entr.Domain.Specifications
 {
     internal sealed class NotSpecification<T> : Specification<T>
     {

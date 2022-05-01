@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Entr.CommandQuery
@@ -26,6 +27,7 @@ namespace Entr.CommandQuery
             _requestHandlerResolver = requestHandlerResolver;
         }
 
+        [DebuggerNonUserCode]
         public Task<TResponse> SendAsync<TResponse>(IAsyncCommand<TResponse> command)
         {
             var handler = ResolveAsyncHandler<TResponse>(
@@ -35,6 +37,7 @@ namespace Entr.CommandQuery
             return handler.Handle(command);
         }
 
+        [DebuggerNonUserCode]
         public Task<TResponse> SendAsync<TResponse>(IAsyncQuery<TResponse> query)
         {
             var handler = ResolveAsyncHandler<TResponse>(
