@@ -27,7 +27,8 @@ namespace Entr.Products.Controllers
 
         public async Task<IPagedResult<Product>> Handle(GetAllProductsQuery query)
         {
-            return await _dbContext.Products.ToPagedResultAsync(query.PagingOptions, new SortDescriptor("Name"));
+            return await _dbContext.Products
+                .ToPagedResultAsync(query.PagingOptions, new SortDescriptor("Name"));
         }
     }
 }

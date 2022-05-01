@@ -1,60 +1,64 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Entr.CommandQuery;
-
-public interface IMediator
+namespace Entr.CommandQuery
 {
-    Task<TResponse> SendAsync<TResponse>(IAsyncQuery<TResponse> command);
-    Task<TResponse> SendAsync<TResponse>(IAsyncCommand<TResponse> query);
-}
-
-public class Mediator : IMediator
-{
-    static readonly Type AsyncRequestHandlerWrapperType = typeof(AsyncRequestHandlerWrapper<,>);
-    static readonly Type AsyncCommandHandlerInterfaceType = typeof(IAsyncCommandHandler<,>);
-    static readonly Type AsyncQueryHandlerInterfaceType = typeof(IAsyncQueryHandler<,>);
-
-    readonly IRequestHandlerResolver _requestHandlerResolver;
-
-    readonly ConcurrentDictionary<Type, Type> _handlerTypes = new ConcurrentDictionary<Type, Type>();
-    readonly ConcurrentDictionary<Type, Type> _wrappedHandlerTypes = new ConcurrentDictionary<Type, Type>();
-
-    public Mediator(IRequestHandlerResolver requestHandlerResolver)
+    public interface IMediator
     {
-        _requestHandlerResolver = requestHandlerResolver;
+        Task<TResponse> SendAsync<TResponse>(IAsyncQuery<TResponse> command);
+        Task<TResponse> SendAsync<TResponse>(IAsyncCommand<TResponse> query);
     }
 
-    public Task<TResponse> SendAsync<TResponse>(IAsyncCommand<TResponse> command)
+    public class Mediator : IMediator
     {
-        var handler = ResolveAsyncHandler<TResponse>(
-            AsyncCommandHandlerInterfaceType,
-            command.GetType());
+        static readonly Type AsyncRequestHandlerWrapperType = typeof(AsyncRequestHandlerWrapper<,>);
+        static readonly Type AsyncCommandHandlerInterfaceType = typeof(IAsyncCommandHandler<,>);
+        static readonly Type AsyncQueryHandlerInterfaceType = typeof(IAsyncQueryHandler<,>);
 
-        return handler.Handle(command);
-    }
+        readonly IRequestHandlerResolver _requestHandlerResolver;
 
-    public Task<TResponse> SendAsync<TResponse>(IAsyncQuery<TResponse> query)
-    {
-        var handler = ResolveAsyncHandler<TResponse>(
-            AsyncQueryHandlerInterfaceType,
-            query.GetType());
+        readonly ConcurrentDictionary<Type, Type> _handlerTypes = new ConcurrentDictionary<Type, Type>();
+        readonly ConcurrentDictionary<Type, Type> _wrappedHandlerTypes = new ConcurrentDictionary<Type, Type>();
 
-        return handler.Handle(query);
-    }
+        public Mediator(IRequestHandlerResolver requestHandlerResolver)
+        {
+            _requestHandlerResolver = requestHandlerResolver;
+        }
 
-    IAsyncRequestHandlerWrapper<TResponse> ResolveAsyncHandler<TResponse>(
-        Type requestHandlerInterfaceType, 
-        Type requestType)
-    {
-        var responseType = typeof(TResponse);
+        [DebuggerNonUserCode]
+        public Task<TResponse> SendAsync<TResponse>(IAsyncCommand<TResponse> command)
+        {
+            var handler = ResolveAsyncHandler<TResponse>(
+                AsyncCommandHandlerInterfaceType,
+                command.GetType());
 
-        var requestHandlerType = _handlerTypes.GetOrAdd(requestType, r => requestHandlerInterfaceType.MakeGenericType(r, responseType));
-        var wrappedHandlerType = _wrappedHandlerTypes.GetOrAdd(requestType, r => AsyncRequestHandlerWrapperType.MakeGenericType(r, responseType));
+            return handler.Handle(command);
+        }
 
-        var handler = _requestHandlerResolver.Resolve(requestHandlerType);
+        [DebuggerNonUserCode]
+        public Task<TResponse> SendAsync<TResponse>(IAsyncQuery<TResponse> query)
+        {
+            var handler = ResolveAsyncHandler<TResponse>(
+                AsyncQueryHandlerInterfaceType,
+                query.GetType());
 
-        return (IAsyncRequestHandlerWrapper<TResponse>)Activator.CreateInstance(wrappedHandlerType, handler);
+            return handler.Handle(query);
+        }
+
+        IAsyncRequestHandlerWrapper<TResponse> ResolveAsyncHandler<TResponse>(
+            Type requestHandlerInterfaceType, 
+            Type requestType)
+        {
+            var responseType = typeof(TResponse);
+
+            var requestHandlerType = _handlerTypes.GetOrAdd(requestType, r => requestHandlerInterfaceType.MakeGenericType(r, responseType));
+            var wrappedHandlerType = _wrappedHandlerTypes.GetOrAdd(requestType, r => AsyncRequestHandlerWrapperType.MakeGenericType(r, responseType));
+
+            var handler = _requestHandlerResolver.Resolve(requestHandlerType);
+
+            return (IAsyncRequestHandlerWrapper<TResponse>)Activator.CreateInstance(wrappedHandlerType, handler);
+        }
     }
 }

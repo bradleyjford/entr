@@ -1,12 +1,14 @@
 ﻿using System;
 
-namespace Entr.Domain;
-
-public static class EntityIdSetter
+namespace Entr.Domain
 {
-    public static void SetId<TEntity, TId>(TEntity entity, TId id)
-        where TEntity : Entity<TId>
+    public static class EntityIdSetter
     {
-        entity.Id = id;
+        public static void SetId<TEntity, TId>(TEntity entity, TId id)
+            where TEntity : Entity<TId>
+            where TId : struct
+        {
+            entity.Id = id;
+        }
     }
 }

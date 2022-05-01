@@ -5,60 +5,41 @@ using Entr.CommandQuery;
 using Entr.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Entr.Data.EntityFrameworkCore;
-
-public class UnitOfWorkAsyncCommandHandlerDecorator<TCommand, TResponse> 
-    : IAsyncCommandHandler<TCommand, TResponse>
-    where TCommand : IAsyncCommand<TResponse>
+namespace Entr.Data.EntityFrameworkCore
 {
-    readonly IAsyncCommandHandler<TCommand, TResponse> _decorated;
-    readonly DbContext _dbContext;
-    readonly IUserContext _userContext;
-
-    protected UnitOfWorkAsyncCommandHandlerDecorator(
-        IAsyncCommandHandler<TCommand, TResponse> decorated,
-        DbContext dbContext,
-        IUserContext userContext)
+    public class UnitOfWorkAsyncCommandHandlerDecorator<TCommand, TResponse> 
+        : IAsyncCommandHandler<TCommand, TResponse>
+        where TCommand : IAsyncCommand<TResponse>
     {
-        _decorated = decorated;
-        _dbContext = dbContext;
-        _userContext = userContext;
-    }
+        readonly IAsyncCommandHandler<TCommand, TResponse> _decorated;
+        readonly DbContext _dbContext;
+        readonly IUserContext _userContext;
 
-    public async Task<TResponse> Handle(TCommand command)
-    {
-        var response = await _decorated.Handle(command);
-
-        OnBeforeSaveChanges();
-
-        DbContextInlineAuditor.ApplyInlineAuditValues(_dbContext, _userContext);
-        RestoreRowVersions();
-
-        await _dbContext.SaveChangesAsync();
-
-        return response;
-    }
-
-    protected virtual void OnBeforeSaveChanges()
-    {
-    }
-
-    void RestoreRowVersions()
-    {
-        foreach (var entry in _dbContext.ChangeTracker.Entries())
+        protected UnitOfWorkAsyncCommandHandlerDecorator(
+            IAsyncCommandHandler<TCommand, TResponse> decorated,
+            DbContext dbContext,
+            IUserContext userContext)
         {
-            if (entry.State == EntityState.Added || entry.State == EntityState.Deleted)
-            {
-                continue;
-            }
+            _decorated = decorated;
+            _dbContext = dbContext;
+            _userContext = userContext;
+        }
 
-            if (entry.CurrentValues.Properties.Any(p => p.Name == "RowVersion"))
-            {
-                var property = entry.Property("RowVersion");
+        public async Task<TResponse> Handle(TCommand command)
+        {
+            var response = await _decorated.Handle(command);
 
-                property.OriginalValue = property.CurrentValue;
-                property.IsModified = false;
-            }
+            OnBeforeSaveChanges();
+
+            DbContextInlineAuditor.ApplyInlineAuditValues(_dbContext, _userContext);
+
+            await _dbContext.SaveChangesAsync();
+
+            return response;
+        }
+
+        protected virtual void OnBeforeSaveChanges()
+        {
         }
     }
 }

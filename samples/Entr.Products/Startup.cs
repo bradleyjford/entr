@@ -5,6 +5,7 @@ using Entr.CommandQuery.Autofac;
 using Entr.Data.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,10 +62,15 @@ namespace Entr.Products
             IWebHostEnvironment env, 
             ILoggerFactory loggerFactory)
         {
-            app.UseHttpsRedirection();
-            app.UseEndpoints(o =>
+            if (env.IsDevelopment())
             {
-                o.MapControllers();
+                app.UseDeveloperExceptionPage();
+            }
+            
+            app.UseHttpsRedirection();
+            app.UseEndpoints(c =>
+            {
+                c.MapControllers();
             });
 
             appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());

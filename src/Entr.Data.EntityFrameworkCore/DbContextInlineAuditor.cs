@@ -3,49 +3,58 @@ using Entr.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace Entr.Data.EntityFrameworkCore;
-
-public static class DbContextInlineAuditor
+namespace Entr.Data.EntityFrameworkCore
 {
-    public static void ApplyInlineAuditValues(DbContext dbContext, IUserContext userContext)
+    public static class DbContextInlineAuditor
     {
-        foreach (var entry in dbContext.ChangeTracker.Entries())
+        private const string CreatedUtcDatePropertyName = "CreatedUtcDate";
+        private const string CreatedByUserIdPropertyName = "CreatedByUserId";
+
+        private const string ModifiedUtcDatePropertyName = "ModifiedUtcDate";
+        private const string ModifiedByUserIdPropertyName = "ModifiedByUserId";
+        
+        public static void ApplyInlineAuditValues(DbContext dbContext, IUserContext userContext)
         {
-            var inlineAudited = entry.Entity as IInlineAuditedEntity;
+            foreach (var entry in dbContext.ChangeTracker.Entries())
+            {
+                if (!(entry.Entity is IInlineAuditedEntity))
+                {
+                    continue;
+                }
 
-            if (inlineAudited == null)
-            {
-                continue;
-            }
-
-            if (entry.State == EntityState.Added)
-            {
-                SetCreated(userContext, entry);
-                SetModified(userContext, entry);
-            }
-            else if (entry.State == EntityState.Modified)
-            {
-                SetModified(userContext, entry);
+                if (entry.State == EntityState.Added)
+                {
+                    SetCreated(userContext, entry);
+                    SetModified(userContext, entry);
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    SetModified(userContext, entry);
+                }
             }
         }
-    }
 
-    static void SetCreated(IUserContext userContext, EntityEntry entry)
-    {
-        var existingCreatedUtcDate = entry.CurrentValues["CreatedUtcDate"] as DateTime?;
-
-        // Do not attempt to set the CreatedUtcDate if a value has already been supplied.
-        if (existingCreatedUtcDate == null || existingCreatedUtcDate == default(DateTime))
+        static void SetCreated(IUserContext userContext, EntityEntry entry)
         {
-            entry.CurrentValues["CreatedUtcDate"] = ClockProvider.GetUtcNow();
+            var existingCreatedUtcDate = entry.CurrentValues[CreatedUtcDatePropertyName] as DateTime?;
+
+            // Do not attempt to set the CreatedUtcDate if a value has already been supplied.
+            if (existingCreatedUtcDate == null || existingCreatedUtcDate == default(DateTime))
+            {
+                entry.CurrentValues[CreatedUtcDatePropertyName] = ClockProvider.GetUtcNow();
+            }
+
+            entry.CurrentValues[CreatedByUserIdPropertyName] = userContext.UserId;
         }
 
-        entry.CurrentValues["CreatedByUserId"] = userContext.UserId;
-    }
+        static void SetModified(IUserContext userContext, EntityEntry entry)
+        {
+            if (entry.OriginalValues[ModifiedUtcDatePropertyName] == entry.CurrentValues[ModifiedUtcDatePropertyName])
+            {
+                entry.CurrentValues[ModifiedUtcDatePropertyName] = ClockProvider.GetUtcNow();
+            }
 
-    static void SetModified(IUserContext userContext, EntityEntry entry)
-    {
-        entry.CurrentValues["ModifiedUtcDate"] = ClockProvider.GetUtcNow();
-        entry.CurrentValues["ModifiedByUserId"] = userContext.UserId;
+            entry.CurrentValues[ModifiedByUserIdPropertyName] = userContext.UserId;
+        }
     }
 }
