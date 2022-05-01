@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Entr.Products
@@ -26,8 +27,7 @@ namespace Entr.Products
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc();
 
             services.AddDbContext<ProductsDbContext>(options =>
             {
@@ -58,18 +58,20 @@ namespace Entr.Products
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app, 
-            IApplicationLifetime appLifetime,
-            IHostingEnvironment env, 
+            IHostApplicationLifetime appLifetime,
+            IWebHostEnvironment env, 
             ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseEndpoints(c =>
+            {
+                c.MapControllers();
+            });
 
             appLifetime.ApplicationStopped.Register(() => ApplicationContainer.Dispose());
         }
