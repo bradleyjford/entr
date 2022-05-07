@@ -14,7 +14,7 @@ public class ProductsController : Controller
     readonly IMapper _mapper;
 
     public ProductsController(
-        SampleApiDbContext dbContext, 
+        SampleApiDbContext dbContext,
         IMediator mediator,
         IMapper mapper)
     {
@@ -57,7 +57,7 @@ public class ProductsController : Controller
         var uri = Url.Action(nameof(Get), new { id = product.Id });
 
         var response = _mapper.Map<ProductResponse>(product);
-        
-        return Created(uri, product);
+
+        return Created(uri!, product);
     }
 }

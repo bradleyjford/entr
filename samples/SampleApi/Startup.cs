@@ -29,15 +29,15 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddLogging();
-        
+
         services.AddDbContext<SampleApiDbContext>(options =>
         {
             options.ReplaceService<IValueConverterSelector, EntrEntityIdValueConverterSelector>();
             options.UseSqlServer(Configuration.GetConnectionString("Default"));
         });
 
-        services.AddScoped<DbContext>(sp => sp.GetService<SampleApiDbContext>());
-        
+        services.AddScoped<DbContext>(sp => sp.GetService<SampleApiDbContext>()!);
+
         services.AddAutoMapper(typeof(ProductMappingProfile));
 
         services.AddControllers()

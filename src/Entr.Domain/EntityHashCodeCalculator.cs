@@ -6,6 +6,8 @@ static class EntityHashCodeCalculator
 
     public static int CalculateHashCode<TId>(Entity<TId> entity)
     {
+        if (entity is null) throw new ArgumentNullException(nameof(entity));
+
         if (Equals(default(TId), entity.Id))
         {
             var random = RandomGenerator.Next(Int32.MinValue, Int32.MaxValue);
@@ -15,7 +17,7 @@ static class EntityHashCodeCalculator
         }
         else
         {
-            return entity.Id.GetHashCode();
+            return entity.Id!.GetHashCode();
         }
     }
 }

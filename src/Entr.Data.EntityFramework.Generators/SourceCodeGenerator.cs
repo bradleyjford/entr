@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Globalization;
 using System.Text;
 
 namespace Entr.Data.EntityFramework.Generators;
@@ -28,16 +29,16 @@ using Entr.Domain;
     public static string GenerateSource(ImmutableArray<EntityIdInfo> entityIdClasses)
     {
         var builder = new StringBuilder();
-        
+
         builder.Append(Header);
-        
+
         foreach (var entityIdClass in entityIdClasses)
         {
             GenerateEntityIdClass(entityIdClass, builder);
         }
-        
+
         GenerateValueProviderSelector(entityIdClasses, builder);
-        
+
         return builder.ToString();
     }
 
@@ -55,18 +56,18 @@ using Entr.Domain;
 
     internal static void GenerateEntityIdClass(EntityIdInfo idInfo, StringBuilder builder)
     {
-        builder.Append(@$"namespace Entr.Data.EntityFramework.Generated.{idInfo.Namespace}
+        builder.Append(CultureInfo.InvariantCulture, @$"namespace Entr.Data.EntityFramework.Generated.{idInfo.Namespace}
 {{
     using global::{idInfo.Namespace};
 
     public sealed class {idInfo.Name}ValueConverter : ValueConverter<{idInfo.Name}, {idInfo.WrappedType}>
     {{
         private static readonly Func<ValueConverterInfo, ValueConverter> Factory = vci => new {idInfo.Name}ValueConverter(vci.MappingHints);
-        
+
         public static readonly ValueConverterInfo DefaultInfo = new(
-            modelClrType: typeof({idInfo.Name}), 
-            providerClrType: typeof({idInfo.WrappedType}), 
-            factory: Factory, 
+            modelClrType: typeof({idInfo.Name}),
+            providerClrType: typeof({idInfo.WrappedType}),
+            factory: Factory,
             null);
 
         public {idInfo.Name}ValueConverter() : this(null) {{ }}
@@ -75,7 +76,7 @@ using Entr.Domain;
                 id => id.Value,
                 value => new {idInfo.Name}(value),
                 mappingHints
-            ) 
+            )
         {{ }}
     }}
 }}
@@ -98,14 +99,15 @@ namespace Entr.Data.EntityFramework
 
         foreach (var classToGenerate in classesToGenerate)
         {
-            builder.AppendLine($"            converters.Add(Entr.Data.EntityFramework.Generated.{classToGenerate.Namespace}.{classToGenerate.Name}ValueConverter.DefaultInfo);");
+            builder.AppendLine(CultureInfo.InvariantCulture,
+                $"            converters.Add(Entr.Data.EntityFramework.Generated.{classToGenerate.Namespace}.{classToGenerate.Name}ValueConverter.DefaultInfo);");
         }
 
         builder.Append(@"
             _converters = converters.ToImmutable();
         }
-    
-        public EntrEntityIdValueConverterSelector(ValueConverterSelectorDependencies dependencies) 
+
+        public EntrEntityIdValueConverterSelector(ValueConverterSelectorDependencies dependencies)
             : base(dependencies)
         {
         }

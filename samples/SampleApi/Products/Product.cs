@@ -16,6 +16,6 @@ public class Product : Entity<ProductId>
         Id = ProductId.New();
         Name = name;
     }
-    
-    public string Name { get; set; }
+
+    public string Name { get; set; } = default!;
 }

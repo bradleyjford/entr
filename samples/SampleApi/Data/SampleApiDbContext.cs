@@ -9,7 +9,7 @@ public class SampleApiDbContext : DbContext
     {
     }
 
-    public DbSet<Product> Products { get; set; }
+    public DbSet<Product> Products { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

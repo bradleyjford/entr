@@ -57,8 +57,8 @@ public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
     }
 
     private static void Execute(
-        Compilation compilation, 
-        ImmutableArray<StructDeclarationSyntax> declarations, 
+        Compilation compilation,
+        ImmutableArray<StructDeclarationSyntax> declarations,
         SourceProductionContext context)
     {
         if (declarations.IsDefaultOrEmpty)
@@ -78,19 +78,19 @@ public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
     }
 
     private static ImmutableArray<EntityIdInfo> GetTypesToGenerate(
-        Compilation compilation, 
-        ImmutableArray<StructDeclarationSyntax> declarations, 
+        Compilation compilation,
+        ImmutableArray<StructDeclarationSyntax> declarations,
         CancellationToken cancellationToken)
     {
         var result = ImmutableArray.CreateBuilder<EntityIdInfo>();
-        
+
         foreach (var declaration in declarations)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var semanticModel = compilation.GetSemanticModel(declaration.SyntaxTree);
 
-            if (semanticModel.GetDeclaredSymbol(declaration) is not INamedTypeSymbol symbol)
+            if (semanticModel.GetDeclaredSymbol(declaration, cancellationToken) is not INamedTypeSymbol symbol)
             {
                 // Have we referenced all the necessary assemblies.
                 continue;
@@ -108,7 +108,7 @@ public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
                 //    break;
                 //}
 
-                wrappedTypeName = attribute.AttributeClass.TypeArguments.Single().ToDisplayString();
+                wrappedTypeName = attribute.AttributeClass!.TypeArguments.Single().ToDisplayString();
 
                 break;
             }
@@ -118,7 +118,7 @@ public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
                 // create a diagnostic!
                 continue;
             }
-            
+
             var typeName = symbol.Name;
             var typeNamespace = symbol.ContainingNamespace.ToString();
 
