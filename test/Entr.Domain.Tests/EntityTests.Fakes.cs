@@ -1,28 +1,33 @@
 ﻿using System;
 
-namespace Entr.Domain.Tests
-{
-    partial class EntityTests
-    {
-        class Person : Entity<int>
-        {
-            public Person(int id)
-            {
-                Id = id;
-            }
+namespace Entr.Domain.Tests;
 
-            public void SetId(int id)
-            {
-                Id = id;
-            }
+[EntityId<int>]
+public partial struct PersonId { }
+
+[EntityId<int>]
+public partial struct DogId { }
+
+partial class EntityTests
+{
+    public class Person : Entity<PersonId>
+    {
+        public Person(PersonId id)
+        {
+            Id = id;
         }
 
-        class Dog : Entity<int>
+        public void SetId(PersonId id)
         {
-            public Dog(int id)
-            {
-                Id = id;
-            }
+            Id = id;
+        }
+    }
+
+    public class Dog : Entity<DogId>
+    {
+        public Dog(DogId id)
+        {
+            Id = id;
         }
     }
 }

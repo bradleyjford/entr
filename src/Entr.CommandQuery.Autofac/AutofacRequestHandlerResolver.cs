@@ -1,27 +1,26 @@
 ﻿using System;
 using Autofac;
 
-namespace Entr.CommandQuery.Autofac
+namespace Entr.CommandQuery.Autofac;
+
+public class AutofacRequestHandlerResolver : IRequestHandlerResolver
 {
-    public class AutofacRequestHandlerResolver : IRequestHandlerResolver
+    readonly ILifetimeScope _lifetimeScope;
+
+    public AutofacRequestHandlerResolver(ILifetimeScope lifetimeScope)
     {
-        readonly ILifetimeScope _lifetimeScope;
+        _lifetimeScope = lifetimeScope;
+    }
 
-        public AutofacRequestHandlerResolver(ILifetimeScope lifetimeScope)
+    public object Resolve(Type type)
+    {
+        try
         {
-            _lifetimeScope = lifetimeScope;
+            return _lifetimeScope.Resolve(type);
         }
-
-        public object Resolve(Type type)
+        catch (Exception ex)
         {
-            try
-            {
-                return _lifetimeScope.Resolve(type);
-            }
-            catch (Exception ex)
-            {
-                throw new RequestHandlerNotFoundException(type, ex);
-            }
+            throw new RequestHandlerNotFoundException(type, ex);
         }
     }
 }

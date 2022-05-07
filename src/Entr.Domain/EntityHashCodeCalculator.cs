@@ -1,28 +1,23 @@
-﻿using System;
+﻿namespace Entr.Domain;
 
-namespace Entr.Domain
+static class EntityHashCodeCalculator
 {
-    static class EntityHashCodeCalculator
+    static readonly Random RandomGenerator = new((int)ClockProvider.GetUtcNow().Ticks);
+
+    public static int CalculateHashCode<TId>(Entity<TId> entity)
     {
-        static readonly Random RandomGenerator = new Random((int)ClockProvider.GetUtcNow().Ticks);
+        if (entity is null) throw new ArgumentNullException(nameof(entity));
 
-        public static int CalculateHashCode<TId>(Entity<TId> entity)
+        if (Equals(default(TId), entity.Id))
         {
-            var result = HashCodeUtility.Hash(HashCodeUtility.Seed, entity.GetType());
+            var random = RandomGenerator.Next(Int32.MinValue, Int32.MaxValue);
 
-            if (default(TId).Equals(entity.Id))
-            {
-                var random = RandomGenerator.Next(Int32.MinValue, Int32.MaxValue);
-
-                result = HashCodeUtility.Hash(result, random);
-            }
-            else
-            {
-                result = HashCodeUtility.Hash(result, entity.Id);
-            }
-
-            return result;
+            var result = HashCodeUtility.Hash(HashCodeUtility.Seed, typeof(TId).GetHashCode());
+            return HashCodeUtility.Hash(result, random);
         }
-
+        else
+        {
+            return entity.Id!.GetHashCode();
+        }
     }
 }

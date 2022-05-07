@@ -5,16 +5,16 @@ namespace Entr.Data
 {
     public static class SortDescriptorParser
     {
-        public static IEnumerable<SortDescriptor> Parse(string sortOrder)
+        public static IEnumerable<SortDescriptor> Parse(string? sortOrder)
         {
             var result = new List<SortDescriptor>();
 
-            if (String.IsNullOrEmpty(sortOrder))
+            if (string.IsNullOrEmpty(sortOrder))
             {
                 return result;
             }
 
-            var sortSpecifications = sortOrder.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var sortSpecifications = sortOrder!.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var sortSpecification in sortSpecifications)
             {

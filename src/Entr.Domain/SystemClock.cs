@@ -1,12 +1,9 @@
-﻿using System;
+﻿namespace Entr.Domain;
 
-namespace Entr.Domain
+public class SystemClock : IClock
 {
-    public class SystemClock : IClock
+    public DateTime GetUtcNow()
     {
-        public DateTime GetUtcNow()
-        {
-            return DateTime.UtcNow;
-        }
+        return DateTime.UtcNow;
     }
 }

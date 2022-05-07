@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Entr.CommandQuery
+namespace Entr.CommandQuery;
+
+public interface IRequestHandlerResolver
 {
-    public interface IRequestHandlerResolver
-    {
-        object Resolve(Type type);
-    }
+    object Resolve(Type type);
 }

@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+    db:
+        image: "mcr.microsoft.com/mssql/server"
+        environment:
+            ACCEPT_EULA: $ACCEPT_EULA
+            MSSQL_SA_PASSWORD: $MSSQL_SA_PASSWORD
+            MSSQL_PID: $MSSQL_PID
+        ports:
+            - "1433:1433"
+        volumes:
+            - mssql:/var/opt/mssql
+volumes:
+    mssql:
+        external: true
+    
