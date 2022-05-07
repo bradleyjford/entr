@@ -37,4 +37,11 @@
     <ProjectReference Include="..\..\src\Entr.Domain.Generators\Entr.Domain.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\..\src\Entr.Data.EntityFramework.Generators\Entr.Data.EntityFramework.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="entrypoint.sh" />
+    <Content Include="entrypoint.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
