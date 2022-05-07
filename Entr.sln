@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entr.Products", "samples\Entr.Products\Entr.Products.csproj", "{FB8B8CC5-A374-4070-9A1D-81C0C367F229}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleApi", "samples\SampleApi\SampleApi.csproj", "{FB8B8CC5-A374-4070-9A1D-81C0C367F229}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entr.Domain", "src\Entr.Domain\Entr.Domain.csproj", "{6D90EB1E-C353-450E-A302-0E9D12F4CC9B}"
 EndProject

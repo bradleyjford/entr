@@ -5,7 +5,7 @@ namespace Entr.Domain;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>>
 {
-    readonly object _hashCodeLock = new object();
+    readonly object _hashCodeLock = new();
     volatile int _hashCode;
 
     public TId Id { get; protected internal set; } = default!;
@@ -48,7 +48,6 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
 
     public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
         => Equals(left, right);
-
     public static bool operator !=(Entity<TId>? left, Entity<TId>? right) 
         => !Equals(left, right);
 }

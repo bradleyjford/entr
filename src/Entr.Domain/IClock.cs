@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Entr.Domain;
+﻿namespace Entr.Domain;
 
 public interface IClock
 {
-    DateTimeOffset GetUtcNow();
+    DateTime GetUtcNow();
 }

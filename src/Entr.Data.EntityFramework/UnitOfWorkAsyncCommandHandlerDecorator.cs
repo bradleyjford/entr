@@ -12,7 +12,7 @@ namespace Entr.Data.EntityFramework
         readonly DbContext _dbContext;
         readonly IUserContext _userContext;
 
-        protected UnitOfWorkAsyncCommandHandlerDecorator(
+        public UnitOfWorkAsyncCommandHandlerDecorator(
             IAsyncCommandHandler<TCommand, TResponse> decorated,
             DbContext dbContext,
             IUserContext userContext)
@@ -25,10 +25,10 @@ namespace Entr.Data.EntityFramework
         public async Task<TResponse> Handle(TCommand command)
         {
             var response = await _decorated.Handle(command);
+            
+            DbContextInlineAuditor.ApplyInlineAuditValues(_dbContext, _userContext);
 
             OnBeforeSaveChanges();
-
-            DbContextInlineAuditor.ApplyInlineAuditValues(_dbContext, _userContext);
 
             await _dbContext.SaveChangesAsync();
 

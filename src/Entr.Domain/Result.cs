@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Entr.Domain;
+﻿namespace Entr.Domain;
 
 public abstract class Result
 {

@@ -9,31 +9,31 @@ namespace Entr.Data.EntityFramework.Generators;
 [Generator]
 public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
 {
-    private const string MarkerAttribute = "Entr.Domain.EntrEntityIdAttribute";
+    private const string MarkerAttribute = "Entr.Domain.EntityIdAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        IncrementalValuesProvider<ClassDeclarationSyntax> classDeclarations = context.SyntaxProvider
+        IncrementalValuesProvider<StructDeclarationSyntax> typeDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
                 transform: static (ctx, _) => GetSemanticTargetForGeneration(ctx))
             .Where(static m => m is not null)!;
 
-        IncrementalValueProvider<(Compilation Compilation, ImmutableArray<ClassDeclarationSyntax> Classes)> compilationAndClasses
-            = context.CompilationProvider.Combine(classDeclarations.Collect());
+        IncrementalValueProvider<(Compilation Compilation, ImmutableArray<StructDeclarationSyntax> Classes)> compilationAndTypeDeclarations
+            = context.CompilationProvider.Combine(typeDeclarations.Collect());
 
-        context.RegisterSourceOutput(compilationAndClasses,
+        context.RegisterSourceOutput(compilationAndTypeDeclarations,
             static (spc, source) => Execute(source.Compilation, source.Classes, spc));
     }
 
     private static bool IsSyntaxTargetForGeneration(SyntaxNode node) =>
-        node is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
+        node is StructDeclarationSyntax { AttributeLists.Count: > 0 };
 
-    private static ClassDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+    private static StructDeclarationSyntax? GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
     {
-        var classDeclaration = (ClassDeclarationSyntax)context.Node;
+        var declarationSyntax = (StructDeclarationSyntax)context.Node;
 
-        foreach (var attributeList in classDeclaration.AttributeLists)
+        foreach (var attributeList in declarationSyntax.AttributeLists)
         {
             foreach (var attribute in attributeList.Attributes)
             {
@@ -48,7 +48,7 @@ public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
 
                 if (typeName.StartsWith(MarkerAttribute + "<"))
                 {
-                    return classDeclaration;
+                    return declarationSyntax;
                 }
             }
         }
@@ -58,18 +58,16 @@ public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
 
     private static void Execute(
         Compilation compilation, 
-        ImmutableArray<ClassDeclarationSyntax> locatedClasses, 
+        ImmutableArray<StructDeclarationSyntax> declarations, 
         SourceProductionContext context)
     {
-        if (locatedClasses.IsDefaultOrEmpty)
+        if (declarations.IsDefaultOrEmpty)
         {
             // nothing to do yet
             return;
         }
 
-        var distinctClasses = locatedClasses.Distinct();
-
-        var typesToGenerate = GetTypesToGenerate(compilation, distinctClasses, context.CancellationToken);
+        var typesToGenerate = GetTypesToGenerate(compilation, declarations, context.CancellationToken);
 
         if (typesToGenerate.Any())
         {
@@ -79,33 +77,28 @@ public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
         }
     }
 
-    private static List<EntityIdTypeMetadata> GetTypesToGenerate(Compilation compilation, IEnumerable<ClassDeclarationSyntax> classDelarations, CancellationToken cancellationToken)
+    private static ImmutableArray<EntityIdInfo> GetTypesToGenerate(
+        Compilation compilation, 
+        ImmutableArray<StructDeclarationSyntax> declarations, 
+        CancellationToken cancellationToken)
     {
-        var typesToGenerate = new List<EntityIdTypeMetadata>();
-
-        //var markerAttributeSymbol = compilation.GetTypeByMetadataName(MarkerAttribute);
-
-        //if (markerAttributeSymbol == null)
-        //{
-        //    // Can't locate the attribute
-        //    return idClassesToGenerate;
-        //}
-
-        foreach (var classDeclaration in classDelarations)
+        var result = ImmutableArray.CreateBuilder<EntityIdInfo>();
+        
+        foreach (var declaration in declarations)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var semanticModel = compilation.GetSemanticModel(classDeclaration.SyntaxTree);
+            var semanticModel = compilation.GetSemanticModel(declaration.SyntaxTree);
 
-            if (semanticModel.GetDeclaredSymbol(classDeclaration) is not INamedTypeSymbol classSymbol)
+            if (semanticModel.GetDeclaredSymbol(declaration) is not INamedTypeSymbol symbol)
             {
                 // Have we referenced all the necessary assemblies.
                 continue;
             }
 
-            string? valueType = null;
+            string? wrappedTypeName = null;
 
-            var attributes = classSymbol.GetAttributes();
+            var attributes = symbol.GetAttributes();
 
             foreach (var attribute in attributes)
             {
@@ -115,23 +108,23 @@ public class EntrEntityIdValueConverterGenerator : IIncrementalGenerator
                 //    break;
                 //}
 
-                valueType = attribute.AttributeClass.TypeArguments.Single().ToDisplayString();
+                wrappedTypeName = attribute.AttributeClass.TypeArguments.Single().ToDisplayString();
 
                 break;
             }
 
-            if (valueType is null)
+            if (wrappedTypeName is null)
             {
                 // create a diagnostic!
                 continue;
             }
             
-            var className = classSymbol.Name;
-            var classNamespace = classSymbol.ContainingNamespace.ToString();
+            var typeName = symbol.Name;
+            var typeNamespace = symbol.ContainingNamespace.ToString();
 
-            typesToGenerate.Add(new EntityIdTypeMetadata(classNamespace, className, valueType));
+            result.Add(new EntityIdInfo(typeNamespace, typeName, wrappedTypeName));
         }
 
-        return typesToGenerate;
+        return result.ToImmutable();
     }
 }

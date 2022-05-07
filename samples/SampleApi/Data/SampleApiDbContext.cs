@@ -1,11 +1,10 @@
-﻿using Entr.Products.Domain;
-using Microsoft.EntityFrameworkCore;
+﻿using SampleApi.Products;
 
-namespace Entr.Products.Data;
+namespace SampleApi.Data;
 
-public class ProductsDbContext : DbContext
+public class SampleApiDbContext : DbContext
 {
-    public ProductsDbContext(DbContextOptions<ProductsDbContext> options) 
+    public SampleApiDbContext(DbContextOptions<SampleApiDbContext> options)
         : base(options)
     {
     }

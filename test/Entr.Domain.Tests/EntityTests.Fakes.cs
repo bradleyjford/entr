@@ -2,11 +2,11 @@
 
 namespace Entr.Domain.Tests;
 
-[EntrEntityId<int>]
-public partial class PersonId { }
+[EntityId<int>]
+public partial struct PersonId { }
 
-[EntrEntityId<int>]
-public partial class DogId { }
+[EntityId<int>]
+public partial struct DogId { }
 
 partial class EntityTests
 {

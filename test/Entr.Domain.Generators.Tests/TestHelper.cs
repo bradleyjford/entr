@@ -1,7 +1,7 @@
-﻿using System.Collections.Immutable;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entr.Domain.Generators.Tests;
 
@@ -11,20 +11,25 @@ public static class TestHelper
     {
         // Parse the provided string into a C# syntax tree
         var syntaxTree = CSharpSyntaxTree.ParseText(source);
-
+        
         // Create references for assemblies we require
         // We could add multiple references if required
         IEnumerable<PortableExecutableReference> references = new[]
         {
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(Attribute).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(JsonConverter).Assembly.Location),
             MetadataReference.CreateFromFile(typeof(SequentialGuidGenerator).Assembly.Location),
         };
+
+        var options = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
         // Create a Roslyn compilation for the syntax tree.
         var compilation = CSharpCompilation.Create(
             assemblyName: "DomainGeneratorTests",
             syntaxTrees: new[] { syntaxTree },
-            references: references);
+            references: references,
+            options: options);
 
         // Create an instance of our EnumGenerator incremental source generator
         var generator = new EntrEntityIdGenerator();
@@ -42,3 +47,4 @@ public static class TestHelper
             .UseDirectory("Snapshots");
     }
 }
+

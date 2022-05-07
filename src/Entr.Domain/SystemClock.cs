@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Entr.Domain;
+﻿namespace Entr.Domain;
 
 public class SystemClock : IClock
 {
-    public DateTimeOffset GetUtcNow()
+    public DateTime GetUtcNow()
     {
         return DateTime.UtcNow;
     }

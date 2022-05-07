@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Entr.Domain;
+﻿namespace Entr.Domain;
 
 static class EntityHashCodeCalculator
 {
-    static readonly Random RandomGenerator = new Random((int)ClockProvider.GetUtcNow().Ticks);
+    static readonly Random RandomGenerator = new((int)ClockProvider.GetUtcNow().Ticks);
 
     public static int CalculateHashCode<TId>(Entity<TId> entity)
     {
@@ -12,7 +10,7 @@ static class EntityHashCodeCalculator
         {
             var random = RandomGenerator.Next(Int32.MinValue, Int32.MaxValue);
 
-            var result = HashCodeUtility.Hash(HashCodeUtility.Seed, entity.GetType());
+            var result = HashCodeUtility.Hash(HashCodeUtility.Seed, typeof(TId).GetHashCode());
             return HashCodeUtility.Hash(result, random);
         }
         else

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Entr.Domain;
 
@@ -45,28 +44,35 @@ public static class HashCodeUtility
         return Hash(seed, BitConverter.DoubleToInt64Bits(value));
     }
 
+    public static int Hash(int seed, Guid value)
+    {
+        return Hash(seed, value.GetHashCode());
+    }
+    
+    public static int Hash(int seed, Type value)
+    {
+        return Hash(seed, value.GetHashCode());
+    }
+    
     public static int Hash(int seed, object obj)
     {
         var result = seed;
 
-        var items = obj as IEnumerable;
-
-        if (obj == null)
+        if (obj is null)
         {
-            result = Hash(result, 0);
+            return Hash(result, 0);
         }
-        else if (items != null)
+        
+        if (obj is IEnumerable items)
         {
             foreach (var item in items)
             {
                 result = Hash(result, item);
             }
-        }
-        else
-        {
-            result = Hash(result, obj.GetHashCode());
+
+            return result;
         }
 
-        return result;
+        return Hash(result, obj.GetHashCode());
     }
 }

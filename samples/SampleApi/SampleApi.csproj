@@ -5,6 +5,10 @@
     <UserSecretsId>Entr.Products</UserSecretsId>
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+
+    <UserSecretsId>SampleApi</UserSecretsId>
+
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,19 +17,20 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.2.0" />
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="FluentValidation" Version="10.4.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.4" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.3" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.4" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Entr.Data.EntityFramework\Entr.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Entr.Domain\Entr.Domain.csproj" />
     <ProjectReference Include="..\..\src\Entr.CommandQuery\Entr.CommandQuery.csproj" />
     <ProjectReference Include="..\..\src\Entr.Data\Entr.Data.csproj" />
     <ProjectReference Include="..\..\src\Entr.CommandQuery.Autofac\Entr.CommandQuery.Autofac.csproj" />
+    <ProjectReference Include="..\..\src\Entr.Net.Smtp\Entr.Net.Smtp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿ <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>preview</LangVersion>
     <EnablePreviewFeatures>true</EnablePreviewFeatures>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -10,7 +10,7 @@
     <Authors>Bradley Ford</Authors>
     <Company />
     <Product>Entr</Product>
-    <Copyright>Copyright 2013 - 2018 Bradley Ford</Copyright>
+    <Copyright>Copyright 2013 - 2022 Bradley Ford</Copyright>
     <PackageLicenseUrl>https://github.com/bradleyjford/entr/blob/master/LICENSE.TXT</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/bradleyjford/entr/</PackageProjectUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -20,5 +20,5 @@
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>First preview release</PackageReleaseNotes>
   </PropertyGroup>
-
+   
 </Project>

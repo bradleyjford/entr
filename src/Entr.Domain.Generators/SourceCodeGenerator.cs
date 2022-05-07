@@ -1,13 +1,15 @@
-﻿using System.Text;
+﻿using System.Collections.Immutable;
+using System.Text;
 
 namespace Entr.Domain.Generators;
 
 internal static class SourceCodeGenerator
 {
-    internal const string Attribute = @"namespace Entr.Domain
+    internal const string Attribute = @"
+namespace Entr.Domain
 {
-    [System.AttributeUsage(System.AttributeTargets.Class)]
-    public class EntrEntityIdAttribute<TValue> : System.Attribute
+    [System.AttributeUsage(System.AttributeTargets.Struct)]
+    public class EntityIdAttribute<TValue> : System.Attribute
     {
     }
 }
@@ -23,102 +25,142 @@ internal static class SourceCodeGenerator
 //------------------------------------------------------------------------------
 
 #pragma warning disable 1591 // publicly visible type or member must be documented
-
-using System;
-using Entr.Domain;
-
 ";
 
-    public static string GenerateSource(List<EntityIdTypeMetadata> entityIdClasses)
+    public static string GenerateSource(ImmutableArray<EntityIdInfo> entityIds)
     {
         var builder = new StringBuilder();
 
         builder.Append(Header);
 
-        foreach (var entityIdClass in entityIdClasses)
+        foreach (var entityIdClass in entityIds)
         {
-            GenerateEntityIdClass(entityIdClass, builder);
+            GenerateEntityIdType(entityIdClass, builder);
         }
         
         return builder.ToString();
     }
 
-    private static void GenerateEntityIdClass(EntityIdTypeMetadata c, StringBuilder builder)
+    internal static void GenerateEntityIdType(EntityIdInfo idInfo, StringBuilder builder)
     {
         builder.Append(@$"
-namespace {c.ContainingNamespace}
+namespace {idInfo.Namespace}
 {{
-    public partial class {c.Name}
-    {{
-        private readonly {c.WrappedType} _value;
-        private int _hashCode = 0;
+    using System;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Text.Json;
+    using System.Text.Json.Serialization;
+    using Entr.Domain;
 
-");
+    [JsonConverter(typeof({idInfo.Name}JsonConverter))]
+    [TypeConverter(typeof({idInfo.Name}TypeConverter))]
+    readonly partial struct {idInfo.Name} : IEquatable<{idInfo.Name}>
+    {{");
 
-        if (c.WrappedType == "Guid" || c.WrappedType == "System.Guid")
+        if (idInfo.WrappedType is "Guid" or "System.Guid")
         {
             builder.Append(@$"
-        public static {c.Name} New()
-        {{
-            return new {c.Name}(SequentialGuidGenerator.GenerateId());
-        }}
+        public static {idInfo.Name} New()
+            => new {idInfo.Name}(SequentialGuidGenerator.Generate());
 ");
         }
 
         builder.Append(@$"
-        public {c.Name}({c.WrappedType} value)
+        public {idInfo.Name}({idInfo.WrappedType} value)
         {{
             if (value == default)
             {{
-                throw new ArgumentException(""Specified value cannot be default({c.WrappedType})"", nameof(value));
+                throw new ArgumentException(""Specified value cannot be default({idInfo.WrappedType})"", nameof(value));
             }}
 
-            _value = value;
+            Value = value;
         }}
 
-        protected {c.Name}()
-        {{
-        }}
-
-        public {c.WrappedType} Value => _value;
-
-        public override bool Equals(object obj)
-        {{
-            var other = obj as {c.Name};
-
-            if (other is null)
-            {{
-                return false;
-            }}
-
-            return _value.Equals(other._value);
-        }}
+        public {idInfo.WrappedType} Value {{ get; }}
 
         public override int GetHashCode()
         {{
-            if (_hashCode == 0)
-            {{
-                _hashCode = CalculateHashCode();
-            }}
-
-            return _hashCode;
-        }}
-
-        private int CalculateHashCode()
-        {{
             var hashCode = HashCodeUtility.Seed;
-            hashCode = HashCodeUtility.Hash(hashCode, GetType());
-            hashCode = HashCodeUtility.Hash(hashCode, _value);
+            hashCode = HashCodeUtility.Hash(hashCode, typeof({idInfo.Name}));
+            hashCode = HashCodeUtility.Hash(hashCode, Value);
             return hashCode;
         }}
 
-        public override string ToString() => $""<{c.Name}>{{_value}}"";
+        public override string ToString() => Value.ToString();
 
-        public static bool operator ==({c.Name} left, {c.Name} right) => 
+        public override bool Equals(object obj)
+            => obj is {idInfo.Name} other && Equals(this, other);
+        public bool Equals({idInfo.Name} other)
+            => Equals(this, other);
+
+        public static bool Equals({idInfo.Name}? left, {idInfo.Name}? right)
+        {{
+            if (!left.HasValue && !right.HasValue) return true;
+            if (!left.HasValue || !right.HasValue) return false;
+                
+            return left.Value.Value == right.Value.Value;
+        }}
+        
+        public static bool operator ==({idInfo.Name} left, {idInfo.Name} right) => 
             Equals(left, right);
-
-        public static bool operator !=({c.Name} left, {c.Name} right) => 
+        public static bool operator !=({idInfo.Name} left, {idInfo.Name} right) => 
             !Equals(left, right);
+
+        public sealed class {idInfo.Name}JsonConverter : JsonConverter<{idInfo.Name}>
+        {{
+            public override {idInfo.Name} Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    ");
+            if (idInfo.WrappedType == "System.Guid" || idInfo.WrappedType == "Guid")
+            {
+                builder.AppendLine($"           => new {idInfo.Name}(reader.GetGuid()!);");
+            }
+            else if (idInfo.WrappedType == "System.Int32" || idInfo.WrappedType == "int")
+            {
+                builder.AppendLine($"           => new {idInfo.Name}(reader.GetInt32()!);");
+            }
+            
+            builder.Append(@$"
+            public override void Write(Utf8JsonWriter writer, {idInfo.Name} id, JsonSerializerOptions options) 
+    ");
+            if (idInfo.WrappedType == "System.Guid" || idInfo.WrappedType == "Guid")
+            {
+                builder.AppendLine($"           => writer.WriteStringValue(id.Value);");
+            }
+            else if (idInfo.WrappedType == "System.Int32" || idInfo.WrappedType == "int")
+            {
+                builder.AppendLine($"           => writer.WriteNumberValue(id.Value);");
+            }
+
+            builder.Append(@$"      }}
+
+        public sealed class {idInfo.Name}TypeConverter : TypeConverter
+        {{
+            public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+                => sourceType == typeof({idInfo.WrappedType}) || sourceType == typeof(string);
+            public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+                => destinationType == typeof({idInfo.WrappedType}) || destinationType == typeof(string);
+
+            public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+            {{
+                if (value.GetType() == typeof(string))
+                {{
+                    return new {idInfo.Name}({idInfo.WrappedType}.Parse((string)value));
+                }}
+
+                return new {idInfo.Name}(({idInfo.WrappedType})value);
+            }}
+        
+            public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+            {{
+                if (destinationType == typeof(string))
+                {{
+                    return (({idInfo.Name})value).Value.ToString();
+                }}
+
+                return (({idInfo.Name})value).Value;
+            }}
+        }}
     }}
 }}
 ");

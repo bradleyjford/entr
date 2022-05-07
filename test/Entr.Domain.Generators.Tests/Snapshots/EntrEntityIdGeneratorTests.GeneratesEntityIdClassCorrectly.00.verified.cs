@@ -1,8 +1,10 @@
-﻿//HintName: EntityIdExtensionsAttribute.g.cs
+﻿//HintName: EntityIdAttribute.g.cs
+
 namespace Entr.Domain
 {
-    [System.AttributeUsage(System.AttributeTargets.Class)]
-    public class EntrEntityIdAttribute<TValue> : System.Attribute
+    [System.AttributeUsage(System.AttributeTargets.Struct)]
+    public class EntityIdAttribute<TValue> : System.Attribute
     {
     }
 }
+

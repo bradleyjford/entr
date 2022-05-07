@@ -6,29 +6,30 @@ namespace Entr.Data.EntityFramework
 {
     public static class DbContextInlineAuditor
     {
-        private const string CreatedUtcDatePropertyName = "CreatedUtcDate";
-        private const string CreatedByUserIdPropertyName = "CreatedByUserId";
+        const string CreatedUtcDatePropertyName = nameof(IInlineAuditedEntity.CreatedUtcDate);
+        const string CreatedByUserIdPropertyName = nameof(IInlineAuditedEntity.CreatedByUserId);
 
-        private const string ModifiedUtcDatePropertyName = "ModifiedUtcDate";
-        private const string ModifiedByUserIdPropertyName = "ModifiedByUserId";
+        const string ModifiedUtcDatePropertyName = nameof(IInlineAuditedEntity.ModifiedUtcDate);
+        const string ModifiedByUserIdPropertyName = nameof(IInlineAuditedEntity.ModifiedByUserId);
         
         public static void ApplyInlineAuditValues(DbContext dbContext, IUserContext userContext)
         {
             foreach (var entry in dbContext.ChangeTracker.Entries())
             {
-                if (!(entry.Entity is IInlineAuditedEntity))
+                if (entry.Entity is not IInlineAuditedEntity)
                 {
                     continue;
                 }
 
-                if (entry.State == EntityState.Added)
+                switch (entry.State)
                 {
-                    SetCreated(userContext, entry);
-                    SetModified(userContext, entry);
-                }
-                else if (entry.State == EntityState.Modified)
-                {
-                    SetModified(userContext, entry);
+                    case EntityState.Added:
+                        SetCreated(userContext, entry);
+                        SetModified(userContext, entry);
+                        break;
+                    case EntityState.Modified:
+                        SetModified(userContext, entry);
+                        break;
                 }
             }
         }

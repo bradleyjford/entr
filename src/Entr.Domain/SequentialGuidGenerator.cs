@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Entr.Domain;
+﻿namespace Entr.Domain;
 
 public static class SequentialGuidGenerator
 {
@@ -9,7 +7,7 @@ public static class SequentialGuidGenerator
     /// <remarks>
     /// https://github.com/nhibernate/nhibernate-core/blob/master/src/NHibernate/Id/GuidCombGenerator.cs
     /// </remarks>>
-    public static Guid GenerateId()
+    public static Guid Generate()
     {
         var guidArray = Guid.NewGuid().ToByteArray();
 
