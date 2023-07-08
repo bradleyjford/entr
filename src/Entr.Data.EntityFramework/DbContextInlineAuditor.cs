@@ -4,15 +4,18 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Entr.Data.EntityFramework
 {
-    public static class DbContextInlineAuditor
+    public static class DbContextInlineAuditor<TUser, TUserId>
+        where TUser : Entity<TUserId>
     {
         const string CreatedUtcDatePropertyName = nameof(IInlineAuditedEntity.CreatedUtcDate);
         const string CreatedByUserIdPropertyName = nameof(IInlineAuditedEntity.CreatedByUserId);
 
         const string ModifiedUtcDatePropertyName = nameof(IInlineAuditedEntity.ModifiedUtcDate);
         const string ModifiedByUserIdPropertyName = nameof(IInlineAuditedEntity.ModifiedByUserId);
-        
-        public static void ApplyInlineAuditValues(DbContext dbContext, IUserContext userContext)
+
+        public static async Task ApplyInlineAuditValues(
+            DbContext dbContext,
+            IUserContext<TUser, TUserId> userContext)
         {
             foreach (var entry in dbContext.ChangeTracker.Entries())
             {
@@ -21,20 +24,27 @@ namespace Entr.Data.EntityFramework
                     continue;
                 }
 
+                var user = await userContext.GetCurrent();
+
+                if (user is null)
+                {
+                    return;
+                }
+
                 switch (entry.State)
                 {
                     case EntityState.Added:
-                        SetCreated(userContext, entry);
-                        SetModified(userContext, entry);
+                        SetCreated(user.Id, entry);
+                        SetModified(user.Id, entry);
                         break;
                     case EntityState.Modified:
-                        SetModified(userContext, entry);
+                        SetModified(user.Id, entry);
                         break;
                 }
             }
         }
 
-        static void SetCreated(IUserContext userContext, EntityEntry entry)
+        static void SetCreated(TUserId userId, EntityEntry entry)
         {
             var existingCreatedUtcDate = entry.CurrentValues[CreatedUtcDatePropertyName] as DateTime?;
 
@@ -44,17 +54,17 @@ namespace Entr.Data.EntityFramework
                 entry.CurrentValues[CreatedUtcDatePropertyName] = ClockProvider.GetUtcNow();
             }
 
-            entry.CurrentValues[CreatedByUserIdPropertyName] = userContext.UserId;
+            entry.CurrentValues[CreatedByUserIdPropertyName] = userId;
         }
 
-        static void SetModified(IUserContext userContext, EntityEntry entry)
+        static void SetModified(TUserId userId, EntityEntry entry)
         {
             if (entry.OriginalValues[ModifiedUtcDatePropertyName] == entry.CurrentValues[ModifiedUtcDatePropertyName])
             {
                 entry.CurrentValues[ModifiedUtcDatePropertyName] = ClockProvider.GetUtcNow();
             }
 
-            entry.CurrentValues[ModifiedByUserIdPropertyName] = userContext.UserId;
+            entry.CurrentValues[ModifiedByUserIdPropertyName] = userId;
         }
     }
 }

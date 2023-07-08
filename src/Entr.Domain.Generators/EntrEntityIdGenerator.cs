@@ -15,7 +15,7 @@ public class EntrEntityIdGenerator : IIncrementalGenerator
     {
         context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
             "EntityIdAttribute.g.cs", SourceText.From(SourceCodeGenerator.Attribute, Encoding.UTF8)));
-        
+
         IncrementalValuesProvider<StructDeclarationSyntax> classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => IsSyntaxTargetForGeneration(s),
@@ -60,8 +60,8 @@ public class EntrEntityIdGenerator : IIncrementalGenerator
     }
 
     private static void Execute(
-        Compilation compilation, 
-        ImmutableArray<StructDeclarationSyntax> typeSyntaxes, 
+        Compilation compilation,
+        ImmutableArray<StructDeclarationSyntax> typeSyntaxes,
         SourceProductionContext context)
     {
         if (typeSyntaxes.IsDefaultOrEmpty)
@@ -74,17 +74,17 @@ public class EntrEntityIdGenerator : IIncrementalGenerator
 
         var typesToGenerate = GetTypesToGenerate(compilation, typeSyntaxes, context.CancellationToken);
 
-        if (typesToGenerate.Any())
+        foreach (var typeToGenerate in typesToGenerate)
         {
-            var source = SourceCodeGenerator.GenerateSource(typesToGenerate);
+            var source = SourceCodeGenerator.GenerateSource(typeToGenerate);
 
-            context.AddSource("EntrEntityIds.g.cs", SourceText.From(source, Encoding.UTF8));
+            context.AddSource($"{typeToGenerate.Namespace}.{typeToGenerate.Name}.g.cs", SourceText.From(source, Encoding.UTF8));
         }
     }
 
     private static ImmutableArray<EntityIdInfo> GetTypesToGenerate(
-        Compilation compilation, 
-        ImmutableArray<StructDeclarationSyntax> declarationSyntaxes, 
+        Compilation compilation,
+        ImmutableArray<StructDeclarationSyntax> declarationSyntaxes,
         CancellationToken cancellationToken)
     {
         var typesToGenerate = ImmutableArray.CreateBuilder<EntityIdInfo>();
@@ -131,7 +131,7 @@ public class EntrEntityIdGenerator : IIncrementalGenerator
                 // create a diagnostic!
                 continue;
             }
-            
+
             var symbolName = symbol.Name;
             var symbolNamespace = symbol.ContainingNamespace.ToString();
 

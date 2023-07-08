@@ -23,10 +23,10 @@ public class GetAllProductsQueryHandler : IAsyncQueryHandler<GetAllProductsQuery
         _mapper = mapper;
     }
 
-    public async Task<IPagedResult<ProductResponse>> Handle(GetAllProductsQuery query)
+    public async Task<IPagedResult<ProductResponse>> Handle(GetAllProductsQuery command)
     {
         return await _dbContext.Products
             .ProjectTo<ProductResponse>(_mapper.ConfigurationProvider)
-            .ToPagedResultAsync(query, new SortDescriptor(nameof(Product.Name)));
+            .ToPagedResultAsync(command, new SortDescriptor(nameof(Product.Name)));
     }
 }

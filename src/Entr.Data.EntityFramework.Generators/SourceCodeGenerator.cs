@@ -56,7 +56,7 @@ using Entr.Domain;
 
     internal static void GenerateEntityIdClass(EntityIdInfo idInfo, StringBuilder builder)
     {
-        builder.Append(CultureInfo.InvariantCulture, @$"namespace Entr.Data.EntityFramework.Generated.{idInfo.Namespace}
+        builder.Append(@$"namespace Entr.Data.EntityFramework.Generated.{idInfo.Namespace}
 {{
     using global::{idInfo.Namespace};
 
@@ -99,7 +99,7 @@ namespace Entr.Data.EntityFramework
 
         foreach (var classToGenerate in classesToGenerate)
         {
-            builder.AppendLine(CultureInfo.InvariantCulture,
+            builder.AppendLine(
                 $"            converters.Add(Entr.Data.EntityFramework.Generated.{classToGenerate.Namespace}.{classToGenerate.Name}ValueConverter.DefaultInfo);");
         }
 

@@ -11,7 +11,7 @@ namespace Entr.CommandQuery
         Task<TResponse> SendAsync<TResponse>(IAsyncCommand<TResponse> query);
     }
 
-    public class Mediator : IMediator
+    public sealed class Mediator : IMediator
     {
         static readonly Type AsyncRequestHandlerWrapperType = typeof(AsyncRequestHandlerWrapper<,>);
         static readonly Type AsyncCommandHandlerInterfaceType = typeof(IAsyncCommandHandler<,>);
@@ -19,8 +19,8 @@ namespace Entr.CommandQuery
 
         readonly IRequestHandlerResolver _requestHandlerResolver;
 
-        readonly ConcurrentDictionary<Type, Type> _handlerTypes = new ConcurrentDictionary<Type, Type>();
-        readonly ConcurrentDictionary<Type, Type> _wrappedHandlerTypes = new ConcurrentDictionary<Type, Type>();
+        readonly ConcurrentDictionary<Type, Type> _handlerTypes = new();
+        readonly ConcurrentDictionary<Type, Type> _wrappedHandlerTypes = new();
 
         public Mediator(IRequestHandlerResolver requestHandlerResolver)
         {
@@ -48,7 +48,7 @@ namespace Entr.CommandQuery
         }
 
         IAsyncRequestHandlerWrapper<TResponse> ResolveAsyncHandler<TResponse>(
-            Type requestHandlerInterfaceType, 
+            Type requestHandlerInterfaceType,
             Type requestType)
         {
             var responseType = typeof(TResponse);

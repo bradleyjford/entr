@@ -48,7 +48,7 @@ public class ProductsController : Controller
         return product;
     }
 
-    [HttpPost]
+    [HttpPost("")]
     [ProducesResponseType((int)HttpStatusCode.Created)]
     public async Task<ActionResult<ProductResponse>> Create([FromBody] CreateProductCommand command)
     {
@@ -58,6 +58,20 @@ public class ProductsController : Controller
 
         var response = _mapper.Map<ProductResponse>(product);
 
-        return Created(uri!, product);
+        return Created(uri!, response);
+    }
+
+    [HttpPut("rename")]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    public async Task<ActionResult> Rename(
+        [FromRoute] ProductId productId,
+        [FromBody] ProductName newName)
+    {
+        var command = new RenameProductCommand(productId, newName);
+
+        await _mediator.SendAsync(command);
+
+        return Ok();
     }
 }

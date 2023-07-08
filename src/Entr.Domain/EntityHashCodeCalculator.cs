@@ -12,12 +12,9 @@ static class EntityHashCodeCalculator
         {
             var random = RandomGenerator.Next(Int32.MinValue, Int32.MaxValue);
 
-            var result = HashCodeUtility.Hash(HashCodeUtility.Seed, typeof(TId).GetHashCode());
-            return HashCodeUtility.Hash(result, random);
+            return HashCode.Combine(typeof(TId), random);
         }
-        else
-        {
-            return entity.Id!.GetHashCode();
-        }
+        
+        return entity.Id!.GetHashCode();
     }
 }

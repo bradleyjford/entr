@@ -58,42 +58,16 @@ public static class ContainerBuilderExtensions
     static void RegisterMediatorRequestHandlers(
         ContainerBuilder builder,
         Type handlerType,
-        Assembly assembly, 
+        Assembly assembly,
         params Type[] decorators)
     {
-        if (decorators.Length == 0)
+        builder.RegisterAssemblyTypes(assembly)
+            .As(t => t.GetInterfaces()
+                .Where(i => i.IsClosedTypeOf(handlerType)));
+
+        foreach (var decorator in decorators.Reverse())
         {
-            builder.RegisterAssemblyTypes(assembly)
-                .As(t => t.GetTypeInfo().GetInterfaces()
-                    .Where(i => i.IsClosedTypeOf(handlerType)));
-        }
-        else
-        {
-            var serviceKey = handlerType.Name;
-
-            builder.RegisterAssemblyTypes(assembly)
-                .As(t => t.GetTypeInfo().GetInterfaces()
-                    .Where(i => i.IsClosedTypeOf(handlerType))
-                    .Select(i => new KeyedService(serviceKey, i)));
-
-            var previousDecoratorKey = serviceKey;
-
-            for (var i = 0; i < decorators.Length; i++)
-            {
-                var decoratorType = decorators[i];
-
-                var registration = builder.RegisterGenericDecorator(
-                    decoratorType,
-                    handlerType,
-                    previousDecoratorKey);
-
-                if (i < decorators.Length - 1)
-                {
-                    registration.Keyed(decoratorType.Name, handlerType);
-
-                    previousDecoratorKey = decoratorType.Name;
-                }
-            }
+            builder.RegisterGenericDecorator(decorator, handlerType);
         }
     }
 }

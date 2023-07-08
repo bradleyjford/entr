@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Entr.Domain;
+﻿namespace Entr.Domain;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>>
 {
     readonly object _hashCodeLock = new();
     volatile int _hashCode;
+
+    byte[] _rowVersion = default!;
 
     public TId Id { get; protected internal set; } = default!;
 
@@ -16,7 +15,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
 
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        
+
         return Equals(other);
     }
 
@@ -24,7 +23,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        
+
         if (other.GetType() != GetType()) return false;
 
         return Id!.Equals(other.Id);
@@ -48,6 +47,6 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
 
     public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
         => Equals(left, right);
-    public static bool operator !=(Entity<TId>? left, Entity<TId>? right) 
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
         => !Equals(left, right);
 }

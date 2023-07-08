@@ -7,14 +7,14 @@ namespace Entr.Net.Smtp;
 
 public sealed class EmailQueue
 {
-    readonly Lazy<List<MailMessage>> _messages = 
-        new Lazy<List<MailMessage>>(() => new List<MailMessage>());
+    readonly Lazy<List<MailMessage>> _messages =
+        new (() => new List<MailMessage>());
 
     public void QueueMessage(MailMessage message)
     {
         _messages.Value.Add(message);
     }
 
-    public IEnumerable<MailMessage> Messages => 
+    public IEnumerable<MailMessage> Messages =>
         _messages.IsValueCreated ? _messages.Value : Enumerable.Empty<MailMessage>();
 }

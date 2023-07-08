@@ -2,6 +2,6 @@ namespace SampleApi.Products;
 
 public class ProductResponse
 {
-    public ProductId Id { get; set; } = default!;
-    public string Name { get; set; } = default!;
+    public ProductId Id { get; set; }
+    public ProductName Name { get; set; } = default!;
 }

@@ -2,9 +2,9 @@ using AutoMapper;
 
 namespace SampleApi.Products;
 
-class ProductMappingProfile : Profile
+sealed class ProductsMappingProfile : Profile
 {
-    public ProductMappingProfile()
+    public ProductsMappingProfile()
     {
         CreateMap<Product, ProductResponse>();
     }

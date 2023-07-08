@@ -1,13 +1,11 @@
 ﻿namespace Entr.Domain;
 
-public abstract class AggregateRoot<TId, TUserId> : 
-    Entity<TId>, 
+public abstract class AggregateRoot<TId, TUserId> :
+    Entity<TId>,
     IInlineAuditedEntity<TUserId>
 {
-    public TUserId CreatedByUserId { get; protected set; } = default!;
-    public DateTime CreatedUtcDate { get; protected set; }
-    public TUserId ModifiedByUserId { get; protected set; } = default!;
-    public DateTime ModifiedUtcDate { get; protected set; }
-    
-    public byte[] RowVersion { get; set; } = default!;
+    public TUserId CreatedByUserId { get; } = default!;
+    public DateTime CreatedUtcDate { get; }
+    public TUserId ModifiedByUserId { get; } = default!;
+    public DateTime ModifiedUtcDate { get; }
 }

@@ -1,7 +1,5 @@
-using System.Data;
 using System.Net.Mail;
 using Entr.Net.Smtp;
-using FluentValidation;
 using SampleApi.Data;
 
 namespace SampleApi.Products;
@@ -9,22 +7,12 @@ namespace SampleApi.Products;
 public class CreateProductCommand : IAsyncCommand<Product>
 {
     public string Name { get; set; } = default!;
-
-    public class Validator : AbstractValidator<CreateProductCommand>
-    {
-        public Validator()
-        {
-            this.RuleFor(r => r.Name)
-                .NotEmpty()
-                .MaximumLength(50);
-        }
-    }
 }
 
 public class CreateProductCommandHandler : IAsyncCommandHandler<CreateProductCommand, Product>
 {
-    private readonly SampleApiDbContext _dbContext;
-    private readonly EmailQueue _emailQueue;
+    readonly SampleApiDbContext _dbContext;
+    readonly EmailQueue _emailQueue;
 
     public CreateProductCommandHandler(
         SampleApiDbContext dbContext,
@@ -34,25 +22,25 @@ public class CreateProductCommandHandler : IAsyncCommandHandler<CreateProductCom
         _emailQueue = emailQueue;
     }
 
-    public async Task<Product> Handle(CreateProductCommand request)
+    public async Task<Product> Handle(CreateProductCommand command)
     {
-        var product = new Product(request.Name);
+        var product = new Product(new ProductName(command.Name));
 
         await _dbContext.Products.AddAsync(product);
 
         EnqueueEmails(product);
-        
+
         return product;
     }
 
     void EnqueueEmails(Product product)
     {
         var message = new MailMessage(
-            "system@sampleapi.local", 
-            "admin@sampleapi.local", 
+            "system@sampleapi.local",
+            "admin@sampleapi.local",
             "New Product Added",
             product.Id.ToString());
-        
+
         _emailQueue.QueueMessage(message);
     }
 }
