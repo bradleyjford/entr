@@ -20,7 +20,7 @@ namespace SampleApi.Security;
 
 [JsonConverter(typeof(RoleIdJsonConverter))]
 [TypeConverter(typeof(RoleIdTypeConverter))]
-readonly partial struct RoleId : IEquatable<RoleId>
+readonly partial struct RoleId : IId<RoleId, System.Guid>, IEquatable<RoleId>
 {
     public static RoleId New()
         => new RoleId(SequentialGuidGenerator.Generate());

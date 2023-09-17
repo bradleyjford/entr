@@ -18,7 +18,7 @@ public abstract class TypedInt32<T> : IEquatable<T>
 
     public int Value { get; }
 
-    public bool Equals(T other)
+    public bool Equals(T? other)
     {
         if (other is null) return false;
 

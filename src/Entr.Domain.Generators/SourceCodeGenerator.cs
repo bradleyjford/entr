@@ -51,18 +51,21 @@ namespace {idInfo.Namespace};
 
 [JsonConverter(typeof({idInfo.Name}JsonConverter))]
 [TypeConverter(typeof({idInfo.Name}TypeConverter))]
-readonly partial struct {idInfo.Name} : IEquatable<{idInfo.Name}>
+readonly partial struct {idInfo.Name} : IId<{idInfo.Name}, {idInfo.WrappedType}>, IEquatable<{idInfo.Name}>
 {{");
 
     if (idInfo.WrappedType is "Guid" or "System.Guid")
     {
         builder.Append(@$"
     public static {idInfo.Name} New()
-        => new {idInfo.Name}(SequentialGuidGenerator.Generate());
+        => new(SequentialGuidGenerator.Generate());
 ");
     }
 
     builder.Append(@$"
+    static {idInfo.Name} IId<{idInfo.Name}, {idInfo.WrappedType}>.Create({idInfo.WrappedType} value)
+        => new(value);
+
     public {idInfo.Name}({idInfo.WrappedType} value)
     {{
         if (value == default)

@@ -20,23 +20,10 @@ namespace Entr.Data.EntityFramework.Generated.SampleApi.Products
 {
     using global::SampleApi.Products;
 
-    public sealed class ProductIdValueConverter : ValueConverter<ProductId, System.Guid>
+    public sealed class ProductIdValueConverter : IdValueConverter<ProductId, System.Guid>
     {
-        private static readonly Func<ValueConverterInfo, ValueConverter> Factory = vci => new ProductIdValueConverter(vci.MappingHints);
-
-        public static readonly ValueConverterInfo DefaultInfo = new(
-            modelClrType: typeof(ProductId),
-            providerClrType: typeof(System.Guid),
-            factory: Factory,
-            null);
-
-        public ProductIdValueConverter() : this(null) { }
-        public ProductIdValueConverter(ConverterMappingHints mappingHints = null)
-            : base(
-                id => id.Value,
-                value => new ProductId(value),
-                mappingHints
-            )
+          public ProductIdValueConverter(ConverterMappingHints mappingHints = null)
+            : base(mappingHints)
         { }
     }
 }
@@ -44,23 +31,10 @@ namespace Entr.Data.EntityFramework.Generated.SampleApi.Security
 {
     using global::SampleApi.Security;
 
-    public sealed class RoleIdValueConverter : ValueConverter<RoleId, System.Guid>
+    public sealed class RoleIdValueConverter : IdValueConverter<RoleId, System.Guid>
     {
-        private static readonly Func<ValueConverterInfo, ValueConverter> Factory = vci => new RoleIdValueConverter(vci.MappingHints);
-
-        public static readonly ValueConverterInfo DefaultInfo = new(
-            modelClrType: typeof(RoleId),
-            providerClrType: typeof(System.Guid),
-            factory: Factory,
-            null);
-
-        public RoleIdValueConverter() : this(null) { }
-        public RoleIdValueConverter(ConverterMappingHints mappingHints = null)
-            : base(
-                id => id.Value,
-                value => new RoleId(value),
-                mappingHints
-            )
+          public RoleIdValueConverter(ConverterMappingHints mappingHints = null)
+            : base(mappingHints)
         { }
     }
 }
@@ -68,23 +42,10 @@ namespace Entr.Data.EntityFramework.Generated.SampleApi.Security
 {
     using global::SampleApi.Security;
 
-    public sealed class UserIdValueConverter : ValueConverter<UserId, System.Guid>
+    public sealed class UserIdValueConverter : IdValueConverter<UserId, System.Guid>
     {
-        private static readonly Func<ValueConverterInfo, ValueConverter> Factory = vci => new UserIdValueConverter(vci.MappingHints);
-
-        public static readonly ValueConverterInfo DefaultInfo = new(
-            modelClrType: typeof(UserId),
-            providerClrType: typeof(System.Guid),
-            factory: Factory,
-            null);
-
-        public UserIdValueConverter() : this(null) { }
-        public UserIdValueConverter(ConverterMappingHints mappingHints = null)
-            : base(
-                id => id.Value,
-                value => new UserId(value),
-                mappingHints
-            )
+          public UserIdValueConverter(ConverterMappingHints mappingHints = null)
+            : base(mappingHints)
         { }
     }
 }

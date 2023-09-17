@@ -20,7 +20,7 @@ namespace SampleApi.Products;
 
 [JsonConverter(typeof(ProductIdJsonConverter))]
 [TypeConverter(typeof(ProductIdTypeConverter))]
-readonly partial struct ProductId : IEquatable<ProductId>
+readonly partial struct ProductId : IId<ProductId, System.Guid>, IEquatable<ProductId>
 {
     public static ProductId New()
         => new ProductId(SequentialGuidGenerator.Generate());

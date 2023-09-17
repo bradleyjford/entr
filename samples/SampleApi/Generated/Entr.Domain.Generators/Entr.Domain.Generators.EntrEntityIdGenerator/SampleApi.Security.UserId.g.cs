@@ -20,7 +20,7 @@ namespace SampleApi.Security;
 
 [JsonConverter(typeof(UserIdJsonConverter))]
 [TypeConverter(typeof(UserIdTypeConverter))]
-readonly partial struct UserId : IEquatable<UserId>
+readonly partial struct UserId : IId<UserId, System.Guid>, IEquatable<UserId>
 {
     public static UserId New()
         => new UserId(SequentialGuidGenerator.Generate());

@@ -21,8 +21,11 @@ namespace Entr.Domain.Generators.Tests;
 
 [JsonConverter(typeof(RoleIdJsonConverter))]
 [TypeConverter(typeof(RoleIdTypeConverter))]
-readonly partial struct RoleId : IEquatable<RoleId>
+readonly partial struct RoleId : IId<RoleId, int>, IEquatable<RoleId>
 {
+    static RoleId IId<RoleId, int>.Create(int value)
+        => new RoleId(value);
+
     public RoleId(int value)
     {
         if (value == default)

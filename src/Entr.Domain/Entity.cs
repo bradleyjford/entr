@@ -1,15 +1,21 @@
-﻿namespace Entr.Domain;
+﻿using JetBrains.Annotations;
+
+namespace Entr.Domain;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>>
 {
     readonly object _hashCodeLock = new();
     volatile int _hashCode;
 
+#pragma warning disable CS0414
+#pragma warning disable CA1823
     byte[] _rowVersion = default!;
+#pragma warning restore CA1823
+#pragma warning restore CS0414
 
     public TId Id { get; protected internal set; } = default!;
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         var other = obj as Entity<TId>;
 
@@ -19,7 +25,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>
         return Equals(other);
     }
 
-    public bool Equals(Entity<TId> other)
+    public bool Equals(Entity<TId>? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;

@@ -2,7 +2,7 @@
 
 namespace Entr.Domain.Specifications;
 
-internal class ExpressionParameterReplacer : ExpressionVisitor
+sealed class ExpressionParameterReplacer : ExpressionVisitor
 {
     readonly ParameterExpression _parameter;
 

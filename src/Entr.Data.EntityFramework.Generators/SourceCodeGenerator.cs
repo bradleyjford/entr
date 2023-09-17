@@ -54,29 +54,44 @@ using Entr.Domain;
     //     }
     // }
 
+//     internal static void GenerateEntityIdClass(EntityIdInfo idInfo, StringBuilder builder)
+//     {
+//         builder.Append(@$"namespace Entr.Data.EntityFramework.Generated.{idInfo.Namespace}
+// {{
+//     using global::{idInfo.Namespace};
+//
+//     public sealed class {idInfo.Name}ValueConverter : ValueConverter<{idInfo.Name}, {idInfo.WrappedType}>
+//     {{
+//         private static readonly Func<ValueConverterInfo, ValueConverter> Factory = vci => new {idInfo.Name}ValueConverter(vci.MappingHints);
+//
+//         public static readonly ValueConverterInfo DefaultInfo = new(
+//             modelClrType: typeof({idInfo.Name}),
+//             providerClrType: typeof({idInfo.WrappedType}),
+//             factory: Factory,
+//             null);
+//
+//         public {idInfo.Name}ValueConverter() : this(null) {{ }}
+//         public {idInfo.Name}ValueConverter(ConverterMappingHints mappingHints = null)
+//             : base(
+//                 id => id.Value,
+//                 value => new {idInfo.Name}(value),
+//                 mappingHints
+//             )
+//         {{ }}
+//     }}
+// }}
+// ");
+//    }
     internal static void GenerateEntityIdClass(EntityIdInfo idInfo, StringBuilder builder)
     {
         builder.Append(@$"namespace Entr.Data.EntityFramework.Generated.{idInfo.Namespace}
 {{
     using global::{idInfo.Namespace};
 
-    public sealed class {idInfo.Name}ValueConverter : ValueConverter<{idInfo.Name}, {idInfo.WrappedType}>
+    public sealed class {idInfo.Name}ValueConverter : IdValueConverter<{idInfo.Name}, {idInfo.WrappedType}>
     {{
-        private static readonly Func<ValueConverterInfo, ValueConverter> Factory = vci => new {idInfo.Name}ValueConverter(vci.MappingHints);
-
-        public static readonly ValueConverterInfo DefaultInfo = new(
-            modelClrType: typeof({idInfo.Name}),
-            providerClrType: typeof({idInfo.WrappedType}),
-            factory: Factory,
-            null);
-
-        public {idInfo.Name}ValueConverter() : this(null) {{ }}
-        public {idInfo.Name}ValueConverter(ConverterMappingHints mappingHints = null)
-            : base(
-                id => id.Value,
-                value => new {idInfo.Name}(value),
-                mappingHints
-            )
+          public {idInfo.Name}ValueConverter(ConverterMappingHints mappingHints = null)
+            : base(mappingHints)
         {{ }}
     }}
 }}
